@@ -6,19 +6,9 @@
 <div class="<?php echo $yellow->page->getHtml("entryClass") ?>">
 <div class="entry-header">
 <h1 class="header_title"><span><?php echo $yellow->page->getHtml("titleContent") ?></span></h1>
-<h1 class="komm_title"><a href="#kommentare">
-	<?php $comment_f = "comments/" . $yellow->page->get("pageFile");
- 	if(file_exists($comment_f)){
-		$comment_t = file_get_contents($comment_f);
-		$comment_a = explode("\n", $comment_t);
-		$comment_z = $comment_a[0];
-		unset($comment_a[0]);
-	} else {
-		$comment_z = 0;
-	}
-	echo $comment_z;
-	?>
-	</a></h1>
+<h1 class="komm_title"><a href="#comments">
+<?php echo $yellow->page->getExtra("commentsCount") ?>
+</a></h1>
 </div>
 <div class="entry-content"><?php echo $yellow->page->getContent() ?></div>
 <div class="entry-footer">
@@ -30,11 +20,13 @@
 </div>
 </div>
 
-<a name="kommentare"></a>
+<a name="comments"></a>
+
+<!-- comments begin -->
 
 <?php echo $yellow->page->getExtra("comments") ?>
 
-<!-- Kommentar-Block -->
+<!-- comments end -->
 
 <?php if($yellow->page->get("status") != "done"): ?>
 

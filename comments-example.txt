@@ -1,0 +1,26 @@
+---
+Title: Comment page
+Description: This is a comment section
+---
+
+This section only exists for compatibility in future, for
+example if we want to modify comments from within the webinterfaces.
+
+The comments follow:
+
+----
+
+---
+Name: Tester1
+---
+
+Hello, my name is Tester1.
+
+----
+
+---
+Name: Tester2
+---
+
+Gagag, my name is Tester2.
+
