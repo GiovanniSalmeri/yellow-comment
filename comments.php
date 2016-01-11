@@ -236,7 +236,7 @@ class YellowComments
 					$output .= $comment->getHtml("name");
 					if($url!="") $output .= "</a>";
 					$output .= ":</div>";
-					$output .= "<div class='commentconent'>";					
+					$output .= "<div class='commentcontent'>";					
 					// TODO: Maybe use Markdown here
 					$output .= preg_replace("/\n/", "<br/>", htmlspecialchars($comment->comment));
 					$output .= "</div>";
