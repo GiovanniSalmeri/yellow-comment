@@ -1,3 +1,4 @@
+<?php echo $yellow->page->getExtra("commentsSend") ?>
 <div class="content main">
 <?php $yellow->page->set("entryClass", "entry") ?>
 <?php if($yellow->page->isExisting("tag")): ?>
@@ -32,7 +33,9 @@
 
 <div class="content seperate"></div>
 
-<form class="contact-form" action="/commentscontact/" method="post">
+<p><?php echo $yellow->page->getHtml("contactStatus") ?><p>
+
+<form class="contact-form" action="<?php echo htmlspecialchars($yellow->page->getLocation()) ?>" method="post">
 <p class="contact-name"><label for="name"><?php echo $yellow->text->getHtml("contactName") ?></label><br /><input type="text" class="form-control" name="name" id="name" value="<?php echo htmlspecialchars($_REQUEST["name"]) ?>" /></p>
 <p class="contact-from"><label for="from"><?php echo $yellow->text->getHtml("contactEmail") ?></label><br /><input type="text" class="form-control" name="from" id="from" value="<?php echo htmlspecialchars($_REQUEST["from"]) ?>" /></p>
 <p class="contact-from"><label for="url">Webseite</label><br /><input type="text" class="form-control" name="url" id="url" value="<?php echo htmlspecialchars($_REQUEST["url"]) ?>" /></p>

@@ -11,18 +11,8 @@
 <div class="<?php echo $page->getHtml("entryClass") ?>">
 <div class="entry-header">
 	<h1 class="header_title"><a href="<?php echo $page->getLocation() ?>"><?php echo $page->getHtml("title") ?></a></h1>
-	<h1 class="komm_title"><a href="<?php echo $page->getLocation() ?>#kommentare">
-	<?php $comment_f = "comments/" . $page->get("pageFile");
- 	if(file_exists($comment_f)){
-		$comment_t = file_get_contents($comment_f);
-		$comment_a = explode("\n", $comment_t);
-		$comment_z = $comment_a[0];
-		unset($comment_a[0]);
-	} else {
-		$comment_z = 0;
-	}
-	echo $comment_z;
-	?>
+	<h1 class="comment_title"><a href="<?php echo $page->getLocation() ?>#comments">
+	<?php echo $yellow->plugins->get("Comments")->getCommentCount($page->get("pageFile")) ?>
 	</a></h1>
 </div>
 
