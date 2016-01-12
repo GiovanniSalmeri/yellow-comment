@@ -97,6 +97,7 @@ class YellowComments
 		$content.= "Published: No\n";
 		$content.= "Name: ".$comment->get("name")."\n";
 		$content.= "From: ".$comment->get("from")."\n";
+		$content.= "Created: ".$comment->get("created")."\n";
 		if($comment->get("url")!="") $content.= "Url: ".$comment->get("url")."\n";
 		$content.= "---\n";
 		$content.= $comment->comment."\n";
@@ -129,6 +130,7 @@ class YellowComments
 		$comment->set("name", trim($_REQUEST["name"]));
 		$comment->set("url", trim($_REQUEST["url"]));
 		$comment->set("from", trim($_REQUEST["from"]));
+		$comment->set("created", date("Y-m-d H:i:s"));
 		$comment->comment = trim($_REQUEST["message"]);
 		return $comment;
 	}
@@ -187,9 +189,10 @@ class YellowComments
 	function sendEmail($comment)
 	{
 		$mailMessage = $comment->comment."\r\n";
-		$mailMessage = "-- \r\n".$comment->get("name")."\r\n";
-		$mailMessage = "-- \r\n".$comment->get("from")."\r\n";
-		$mailMessage = "-- \r\n".$comment->get("url")."\r\n";
+		$mailMessage.= "-- \r\n";
+		$mailMessage.= "Name: ".$comment->get("name")."\r\n";
+		$mailMessage.= "Mail: ".$comment->get("from")."\r\n";
+		$mailMessage.= "Url:  ".$comment->get("url")."\r\n";
 		$mailTo = $this->yellow->page->get("contactEmail");
 		if($this->yellow->config->isExisting("contactEmail")) $mailTo = $this->yellow->config->get("contactEmail");
 		$mailSubject = mb_encode_mimeheader($this->yellow->page->get("title"));
@@ -236,9 +239,12 @@ class YellowComments
 					$output .= $comment->getHtml("name");
 					if($url!="") $output .= "</a>";
 					$output .= ":</div>";
-					$output .= "<div class='commentcontent'>";					
+					$output .= "<div class='commentcontent'>";
 					// TODO: Maybe use Markdown here
 					$output .= preg_replace("/\n/", "<br/>", htmlspecialchars($comment->comment));
+					$output .= "</div>";
+					$output .= "<div class='commentdate'>";
+					$output .= $time.$this->yellow->text->normaliseDate($comment->get("created"));
 					$output .= "</div>";
 					$output .= "</div>";
 				}
