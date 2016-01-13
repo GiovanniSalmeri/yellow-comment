@@ -45,6 +45,7 @@ class YellowComments
 {
 	const Version = "0.1";
 	var $yellow;			//access to API
+	var $requiredField;
 	
 	// Handle initialisation
 	function onLoad($yellow)
@@ -55,6 +56,7 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsAutoAppend", "0");
 		$this->yellow->config->setDefault("commentsMaxSize", "10000");
 		$this->yellow->config->setDefault("contactSpamFilter", "href=|url=");
+		$this->requiredField = "";
 	}
 	
 	// Load comments from given file name
@@ -94,6 +96,7 @@ class YellowComments
 		$file = $this->yellow->config->get("commentsDir").$file;
 		$status = "send";
 		$content = "---\n";
+		$content.= "Uid: ".$comment->get("uid")."\n";
 		$content.= "Published: No\n";
 		$content.= "Name: ".$comment->get("name")."\n";
 		$content.= "From: ".$comment->get("from")."\n";
@@ -127,34 +130,36 @@ class YellowComments
 	function buildComment()
 	{
 		$comment = new YellowComment;
-		$comment->set("name", trim($_REQUEST["name"]));
-		$comment->set("url", trim($_REQUEST["url"]));
-		$comment->set("from", trim($_REQUEST["from"]));
+		$comment->set("name", filter_var(trim($_REQUEST["name"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
+		$comment->set("url", filter_var(trim($_REQUEST["url"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
+		$comment->set("from", filter_var(trim($_REQUEST["from"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
 		$comment->set("created", date("Y-m-d H:i:s"));
-		$comment->comment = trim($_REQUEST["message"]);
+		$comment->set("uid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
+		$comment->comment = trim($_REQUEST["comment"]);
 		return $comment;
 	}
 
 	// verify comment for safe use
 	function verifyComment($comment)
 	{
-		// TODO: return which field is wrong to the user
 		// TODO: better texts
 		// TODO: fold me :)
 		$status = "send";
+		$field = "";
 		$spamFilter = $this->yellow->config->get("contactSpamFilter");
-		if(strempty($comment->comment)) $status = "incomplete";
-		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) $status = "error";
-		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) $status = "incomplete";
-		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) $status = "incomplete";
-		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) $status = "incomplete";
-		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) $status = "incomplete";
+		if(strempty($comment->comment)) { $field = "comment"; $status = "incomplete"; }
+		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) { $field = "comment"; $status = "error"; }
+		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $status = "incomplete"; }
+		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) { $field = "from"; $status = "incomplete"; }
+		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) { $field = "from"; $status = "incomplete"; }
+		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) { $field = "url"; $status = "incomplete"; }
 
 		$separator = $this->yellow->config->get("commentsSeparator");
-		if(strpos($comment->comment, $separator)!==false) $status = "incomplete";
-		if(strpos($comment->get("name"), $separator)!==false) $status = "incomplete";
-		if(strpos($comment->get("from"), $separator)!==false) $status = "incomplete";
-		if(strpos($comment->get("url"), $separator)!==false) $status = "incomplete";
+		if(strpos($comment->comment, $separator)!==false) { $field = "comment"; $status = "incomplete"; }
+		if(strpos($comment->get("name"), $separator)!==false) { $field = "name"; $status = "incomplete"; }
+		if(strpos($comment->get("from"), $separator)!==false) { $field = "from"; $status = "incomplete"; }
+		if(strpos($comment->get("url"), $separator)!==false) { $field = "url"; $status = "incomplete"; }
+		$this->requiredField = $field;
 		return $status;
 	}
 
@@ -193,6 +198,7 @@ class YellowComments
 		$mailMessage.= "Name: ".$comment->get("name")."\r\n";
 		$mailMessage.= "Mail: ".$comment->get("from")."\r\n";
 		$mailMessage.= "Url:  ".$comment->get("url")."\r\n";
+		$mailMessage.= "Uid:  ".$comment->get("uid")."\r\n";
 		$mailTo = $this->yellow->page->get("contactEmail");
 		if($this->yellow->config->isExisting("contactEmail")) $mailTo = $this->yellow->config->get("contactEmail");
 		$mailSubject = mb_encode_mimeheader($this->yellow->page->get("title"));
@@ -205,9 +211,8 @@ class YellowComments
 	}
 
 	// Return number of visible comments
-	function getCommentCount($file)
+	function getCommentCount($comments)
 	{
-		$comments = $this->loadComments($file);
 		$count = 0;
 		foreach($comments as $comment)
 		{
@@ -219,45 +224,11 @@ class YellowComments
 		return $count;
 	}
 	
-	// Handle page extra HTML data
-	function onExtra($name)
+	// Return default string if field is required by name otherwise an empty string
+	function required($field, $default)
 	{
-		if(lcfirst($name)=="comments")
-		{
-			$file = $this->yellow->page->get("pageFile");
-			$comments = $this->loadComments($file);
-			$output .= "<div class='comments'>";
-			$output .= "<h1><span>Kommentare: ".$this->getCommentCount($file)."</span></h1>";
-			foreach($comments as $comment)
-			{
-				if($comment->isPublished())
-				{
-					$output .= "<div class='comment'>";
-					$output .= "<div class='commentname'>";
-					$url = $comment->getHtml("url");
-					if($url!="") $output .= "<a href='$url'>";						
-					$output .= $comment->getHtml("name");
-					if($url!="") $output .= "</a>";
-					$output .= ":</div>";
-					$output .= "<div class='commentcontent'>";
-					// TODO: Maybe use Markdown here
-					$output .= preg_replace("/\n/", "<br/>", htmlspecialchars($comment->comment));
-					$output .= "</div>";
-					$output .= "<div class='commentdate'>";
-					$output .= $time.$this->yellow->text->normaliseDate($comment->get("created"));
-					$output .= "</div>";
-					$output .= "</div>";
-				}
-			}
-			$output .= "</div>";			
-		} else if(lcfirst($name)=="commentsCount") {
-			$output = $this->getCommentCount($this->yellow->page->get("pageFile"));
-		} else if(lcfirst($name)=="commentsSend") {
-			$output = $this->processSend($this->yellow->page->get("pageFile"));
-		}
-		return $output;
+		return ($this->requiredField==$field)?$default:"";
 	}
-	
 } 
 
 $yellow->plugins->register("Comments", "YellowComments", YellowComments::Version);

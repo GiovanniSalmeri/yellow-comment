@@ -1,4 +1,6 @@
-<?php echo $yellow->page->getExtra("commentsSend") ?>
+<?php $commentHandler = $yellow->plugins->get("Comments") ?>
+<?php $commentHandler->processSend($yellow->page->get("pageFile")) ?>
+<?php $comments = $commentHandler->loadComments($yellow->page->get("pageFile")) ?>
 <div class="content main">
 <?php $yellow->page->set("entryClass", "entry") ?>
 <?php if($yellow->page->isExisting("tag")): ?>
@@ -8,7 +10,7 @@
 <div class="entry-header">
 <h1 class="header_title"><span><?php echo $yellow->page->getHtml("titleContent") ?></span></h1>
 <h1 class="komm_title"><a href="#comments">
-<?php echo $yellow->page->getExtra("commentsCount") ?>
+<?php echo $commentHandler->getCommentCount($comments) ?>
 </a></h1>
 </div>
 <div class="entry-content"><?php echo $yellow->page->getContent() ?></div>
@@ -25,7 +27,20 @@
 
 <!-- comments begin -->
 
-<?php echo $yellow->page->getExtra("comments") ?>
+<div class="comments">
+<h1><span>Kommentare: <?php echo $commentHandler->getCommentCount($comments) ?></span></h1>
+<?php foreach($comments as $comment) { ?> 
+<?php if($comment->isPublished()) { ?>
+<div class="comment">
+<a name="<?php echo $comment->getHtml("uid") ?>"></a>
+<div class="commentname">
+<a href="<?php echo ($comment->getHtml("url")=="")?$yellow->page->getLocation():$comment->getHtml("url")?>"><?php echo $comment->getHtml("name") ?></a>:</div>
+<div class="commentcontent"><?php echo preg_replace("/\n/", "<br/>", htmlspecialchars($comment->comment)) // TODO: Maybe use Markdown here ?></div>
+<div class="commentdate"><?php echo $this->yellow->text->normaliseDate($comment->get("created")) ?></div>
+</div>
+<?php } ?>
+<?php } ?>
+</div>
 
 <!-- comments end -->
 
@@ -36,10 +51,10 @@
 <p><?php echo $yellow->page->getHtml("contactStatus") ?><p>
 
 <form class="contact-form" action="<?php echo htmlspecialchars($yellow->page->getLocation()) ?>" method="post">
-<p class="contact-name"><label for="name"><?php echo $yellow->text->getHtml("contactName") ?></label><br /><input type="text" class="form-control" name="name" id="name" value="<?php echo htmlspecialchars($_REQUEST["name"]) ?>" /></p>
-<p class="contact-from"><label for="from"><?php echo $yellow->text->getHtml("contactEmail") ?></label><br /><input type="text" class="form-control" name="from" id="from" value="<?php echo htmlspecialchars($_REQUEST["from"]) ?>" /></p>
-<p class="contact-from"><label for="url">Webseite</label><br /><input type="text" class="form-control" name="url" id="url" value="<?php echo htmlspecialchars($_REQUEST["url"]) ?>" /></p>
-<p class="contact-message"><label for="message"><?php echo $yellow->text->getHtml("contactMessage") ?></label><br /><textarea class="form-control" name="message" id="message" rows="7" cols="70"><?php echo htmlspecialchars($_REQUEST["message"]) ?></textarea></p>
+<p class="contact-name"><label for="name"><?php echo $yellow->text->getHtml("contactName") ?></label><br /><input type="text" class="form-control<?php echo $commentHandler->required("name", " commentrequired") ?>" name="name" id="name" value="<?php echo htmlspecialchars($_REQUEST["name"]) ?>" /></p>
+<p class="contact-from"><label for="from"><?php echo $yellow->text->getHtml("contactEmail") ?></label><br /><input type="text" class="form-control<?php echo $commentHandler->required("from", " commentrequired") ?>" name="from" id="from" value="<?php echo htmlspecialchars($_REQUEST["from"]) ?>" /></p>
+<p class="contact-url"><label for="url">Webseite:</label><br /><input type="text" class="form-control<?php echo $commentHandler->required("url", " commentrequired") ?>" name="url" id="url" value="<?php echo htmlspecialchars($_REQUEST["url"]) ?>" /></p>
+<p class="contact-comment"><label for="comment"><?php echo $yellow->text->getHtml("contactMessage") ?></label><br /><textarea class="form-control<?php echo $commentHandler->required("name", " required") ?>" name="comment" id="comment" rows="7" cols="70"><?php echo htmlspecialchars($_REQUEST["comment"]) ?></textarea></p>
 <input type="hidden" name="beitrag" value="<?php echo $yellow->page->get('pageFile')?>" />
 <input type="hidden" name="status" value="send" />
 <input type="submit" value="<?php echo $yellow->text->getHtml("contactButton") ?>" class="btn contact-btn" />

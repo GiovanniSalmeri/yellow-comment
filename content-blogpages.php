@@ -1,3 +1,4 @@
+<?php $commentHandler = $yellow->plugins->get("Comments") ?>
 <div class="content main">
 
 <?php if($yellow->page->isExisting("titleBlog")): ?>
@@ -12,7 +13,7 @@
 <div class="entry-header">
 	<h1 class="header_title"><a href="<?php echo $page->getLocation() ?>"><?php echo $page->getHtml("title") ?></a></h1>
 	<h1 class="comment_title"><a href="<?php echo $page->getLocation() ?>#comments">
-	<?php echo $yellow->plugins->get("Comments")->getCommentCount($page->get("pageFile")) ?>
+	<?php echo $commentHandler->getCommentCount($commentHandler->loadComments($page->get("pageFile"))) ?>
 	</a></h1>
 </div>
 
