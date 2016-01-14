@@ -28,7 +28,7 @@
 <!-- comments begin -->
 
 <div class="comments">
-<h1><span>Kommentare: <?php echo $commentHandler->getCommentCount($comments) ?></span></h1>
+<h1><span><?php echo $this->yellow->text->get("commentsComments")." ".$commentHandler->getCommentCount($comments) ?></span></h1>
 <?php foreach($comments as $comment) { ?> 
 <?php if($comment->isPublished()) { ?>
 <div class="comment">
@@ -48,21 +48,21 @@
 
 <div class="content seperate"></div>
 
-<p><?php echo $yellow->page->getHtml("contactStatus") ?><p>
+<p><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
 
 <form class="contact-form" action="<?php echo htmlspecialchars($yellow->page->getLocation()) ?>" method="post">
 <p class="contact-name"><label for="name"><?php echo $yellow->text->getHtml("contactName") ?></label><br /><input type="text" class="form-control<?php echo $commentHandler->required("name", " commentrequired") ?>" name="name" id="name" value="<?php echo htmlspecialchars($_REQUEST["name"]) ?>" /></p>
 <p class="contact-from"><label for="from"><?php echo $yellow->text->getHtml("contactEmail") ?></label><br /><input type="text" class="form-control<?php echo $commentHandler->required("from", " commentrequired") ?>" name="from" id="from" value="<?php echo htmlspecialchars($_REQUEST["from"]) ?>" /></p>
-<p class="contact-url"><label for="url">Webseite:</label><br /><input type="text" class="form-control<?php echo $commentHandler->required("url", " commentrequired") ?>" name="url" id="url" value="<?php echo htmlspecialchars($_REQUEST["url"]) ?>" /></p>
+<p class="contact-url"><label for="url"><?php echo $yellow->text->getHtml("contactUrl") ?></label><br /><input type="text" class="form-control<?php echo $commentHandler->required("url", " commentrequired") ?>" name="url" id="url" value="<?php echo htmlspecialchars($_REQUEST["url"]) ?>" /></p>
 <p class="contact-comment"><label for="comment"><?php echo $yellow->text->getHtml("contactMessage") ?></label><br /><textarea class="form-control<?php echo $commentHandler->required("name", " required") ?>" name="comment" id="comment" rows="7" cols="70"><?php echo htmlspecialchars($_REQUEST["comment"]) ?></textarea></p>
 <input type="hidden" name="beitrag" value="<?php echo $yellow->page->get('pageFile')?>" />
 <input type="hidden" name="status" value="send" />
 <input type="submit" value="<?php echo $yellow->text->getHtml("contactButton") ?>" class="btn contact-btn" />
 </form>
 <p class="comments_info">
-Kommentare werden von Hand moderiert. Die Veröffentlichung kann schon mal einen Tag dauern.
+<?php echo ($this->yellow->config->get("commentsAutoPublish")!="1")?$this->yellow->text->get("commentsManual"):"" ?>
 </p>
 <?php else: ?>
-<p><?php echo $yellow->page->getHtml("contactStatus") ?><p>
+<p><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
 <?php endif ?>
 </div>

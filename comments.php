@@ -54,8 +54,9 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsDir", "comments/");
 		$this->yellow->config->setDefault("commentsSeparator", "----");
 		$this->yellow->config->setDefault("commentsAutoAppend", "0");
+		$this->yellow->config->setDefault("commentsAutoPublish", "0");
 		$this->yellow->config->setDefault("commentsMaxSize", "10000");
-		$this->yellow->config->setDefault("contactSpamFilter", "href=|url=");
+		$this->yellow->config->setDefault("commentSpamFilter", "href=|url=");
 		$this->requiredField = "";
 	}
 	
@@ -97,7 +98,7 @@ class YellowComments
 		$status = "send";
 		$content = "---\n";
 		$content.= "Uid: ".$comment->get("uid")."\n";
-		$content.= "Published: No\n";
+		if($this->yellow->config->get("commentsAutoPublish")!="1") $content.= "Published: No\n";
 		$content.= "Name: ".$comment->get("name")."\n";
 		$content.= "From: ".$comment->get("from")."\n";
 		$content.= "Created: ".$comment->get("created")."\n";
@@ -146,19 +147,19 @@ class YellowComments
 		// TODO: fold me :)
 		$status = "send";
 		$field = "";
-		$spamFilter = $this->yellow->config->get("contactSpamFilter");
-		if(strempty($comment->comment)) { $field = "comment"; $status = "incomplete"; }
-		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) { $field = "comment"; $status = "error"; }
-		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $status = "incomplete"; }
-		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) { $field = "from"; $status = "incomplete"; }
-		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) { $field = "from"; $status = "incomplete"; }
-		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) { $field = "url"; $status = "incomplete"; }
+		$spamFilter = $this->yellow->config->get("commentSpamFilter");
+		if(strempty($comment->comment)) { $field = "comment"; $status = "InvalidComment"; }
+		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) { $field = "comment"; $status = "Error"; }
+		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $status = "InvalidName"; }
+		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) { $field = "from"; $status = "InvalidMail"; }
+		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) { $field = "from"; $status = "InvalidMail"; }
+		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) { $field = "url"; $status = "InvalidUrl"; }
 
 		$separator = $this->yellow->config->get("commentsSeparator");
-		if(strpos($comment->comment, $separator)!==false) { $field = "comment"; $status = "incomplete"; }
-		if(strpos($comment->get("name"), $separator)!==false) { $field = "name"; $status = "incomplete"; }
-		if(strpos($comment->get("from"), $separator)!==false) { $field = "from"; $status = "incomplete"; }
-		if(strpos($comment->get("url"), $separator)!==false) { $field = "url"; $status = "incomplete"; }
+		if(strpos($comment->comment, $separator)!==false) { $field = "comment"; $status = "InvalidComment"; }
+		if(strpos($comment->get("name"), $separator)!==false) { $field = "name"; $status = "InvalidName"; }
+		if(strpos($comment->get("from"), $separator)!==false) { $field = "from"; $status = "InvalidMail"; }
+		if(strpos($comment->get("url"), $separator)!==false) { $field = "url"; $status = "InvalidUrl"; }
 		$this->requiredField = $field;
 		return $status;
 	}
@@ -174,23 +175,23 @@ class YellowComments
 			$status = $this->verifyComment($comment);
 			if($status=="send" && $this->yellow->config->get("commentsAutoAppend")) $status = $this->appendComment($file, $comment);
 			if($status=="send") $status = $this->sendEmail($comment);
-			switch($status)
+			if($status=="done")
 			{
-				case "incomplete":	$this->yellow->page->set("contactStatus", $this->yellow->text->get("contactStatusIncomplete")); break;
-				case "invalid":		$this->yellow->page->set("contactStatus", $this->yellow->text->get("contactStatusInvalid")); break;
-				case "done":		$this->yellow->page->set("contactStatus", $this->yellow->text->get("contactStatusDone")); break;
-				case "error":		$this->yellow->page->error(500, $this->yellow->text->get("contactStatusError")); break;
+				$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatusDone"));
+			} else {
+				$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatus".$status));
+				$status = "invalid";
 			}
 			$this->yellow->page->setHeader("Last-Modified", $this->yellow->toolbox->getHttpDateFormatted(time()));
 			$this->yellow->page->setHeader("Cache-Control", "no-cache, must-revalidate");
 		} else {
 			$status = "none";
-			$this->yellow->page->set("contactStatus", $this->yellow->text->get("contactStatusNone"));
+			$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatusNone"));
 		}
 		$this->yellow->page->set("status", $status);
 	}
 	
-	// Send contact email
+	// Send comment email
 	function sendEmail($comment)
 	{
 		$mailMessage = $comment->comment."\r\n";
@@ -199,8 +200,8 @@ class YellowComments
 		$mailMessage.= "Mail: ".$comment->get("from")."\r\n";
 		$mailMessage.= "Url:  ".$comment->get("url")."\r\n";
 		$mailMessage.= "Uid:  ".$comment->get("uid")."\r\n";
-		$mailTo = $this->yellow->page->get("contactEmail");
-		if($this->yellow->config->isExisting("contactEmail")) $mailTo = $this->yellow->config->get("contactEmail");
+		$mailTo = $this->yellow->page->get("commentEmail");
+		if($this->yellow->config->isExisting("commentEmail")) $mailTo = $this->yellow->config->get("commentEmail");
 		$mailSubject = mb_encode_mimeheader($this->yellow->page->get("title"));
 		$mailHeaders = empty($from) ? "From: noreply\r\n" : "From: ".mb_encode_mimeheader($name)." <$from>\r\n";
 		$mailHeaders .= "X-Contact-Url: ".mb_encode_mimeheader($this->yellow->page->getUrl())."\r\n";
