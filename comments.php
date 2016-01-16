@@ -65,6 +65,14 @@ class YellowComments
 		$this->cleanup();
 	}
 
+	// Check if the web interface is active
+	function isWebinterface($page)
+	{
+		$location = $page->getLocation();
+		$webinterface = $this->yellow->plugins->get("webinterface");
+		return $webinterface?$webinterface->checkRequest($location):false;
+	}
+
 	// Cleanup datastructures
 	function onParseContentRaw($page, $text)
 	{
