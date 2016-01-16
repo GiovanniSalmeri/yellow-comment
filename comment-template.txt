@@ -1,0 +1,11 @@
+---
+Title: Comment page
+Description: This is a comment section
+Parser: Comments
+---
+
+This section only exists for compatibility in future, for
+example if we want to modify comments from within the webinterfaces.
+
+The comments follow:
+

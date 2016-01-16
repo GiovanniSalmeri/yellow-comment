@@ -46,30 +46,71 @@ class YellowComments
 	const Version = "0.1";
 	var $yellow;			//access to API
 	var $requiredField;
+	var $comments;
+	var $pageText;
 	
 	// Handle initialisation
 	function onLoad($yellow)
 	{
 		$this->yellow = $yellow;
-		$this->yellow->config->setDefault("commentsDir", "comments/");
+		$this->yellow->config->setDefault("commentsDir", "");
+		$this->yellow->config->setDefault("commentsExtension", "-comments");
+		$this->yellow->config->setDefault("commentsTemplate", "system/config/comment-template.txt");
 		$this->yellow->config->setDefault("commentsSeparator", "----");
 		$this->yellow->config->setDefault("commentsAutoAppend", "0");
 		$this->yellow->config->setDefault("commentsAutoPublish", "0");
 		$this->yellow->config->setDefault("commentsMaxSize", "10000");
 		$this->yellow->config->setDefault("commentSpamFilter", "href=|url=");
 		$this->requiredField = "";
+		$this->cleanup();
+	}
+
+	// Cleanup datastructures
+	function onParseContentRaw($page, $text)
+	{
+		return ($page->get("parser")=="Comments")?$this->yellow->text->get("commentsWebinterfaceModify"):$text;
+	}
+
+	// Handle page meta data parsing
+	function onParseMeta($page)
+	{
+		if($page->get("parser")=="Comments") $page->visible = false;
+	}
+
+	// Cleanup datastructures
+	function cleanup()
+	{
+		$this->comments = array();
+		$this->pageText = "";
+	}
+
+	// Return file name from page object (depending on settings)
+	function getCommentFileName($page)
+	{
+		if($this->yellow->config->get("commentsDir")=="")
+		{
+			$file = $page->fileName;
+			$extension = $this->yellow->config->get("contentExtension");
+			if(substru($file, strlenu($file)-strlenu($extension))==$extension)
+				$file = substru($file, 0, strlenu($file)-strlenu($extension));
+			$file .= $this->yellow->config->get("commentsExtension").$extension;
+			return $file;
+		} else {
+			return $this->yellow->config->get("commentsDir").$page->get("pageFile");
+		}
 	}
 	
 	// Load comments from given file name
-	function loadComments($file)
+	function loadComments($page)
 	{
-		$file = $this->yellow->config->get("commentsDir").$file;
-		$comments = array();
+		$file = $this->getCommentFileName($page);
+		$this->cleanup();
 		if(file_exists($file))
 		{
 			$contents = explode($this->yellow->config->get("commentsSeparator"), file_get_contents($file));
 			if(count($contents>0))
 			{
+				$pageText = $contents[0];
 				unset($contents[0]);
 				foreach($contents as $content)
 				{
@@ -82,19 +123,18 @@ class YellowComments
 							if(!empty($matches[1]) && !strempty($matches[2])) $comment->set(lcfirst($matches[1]), $matches[2]);
 						}
 						$comment->comment = trim($parts[3]);
-						array_push($comments, $comment);
+						array_push($this->comments, $comment);
 					}
 				}
 			}
 		}
-		return $comments;
 	}
 	
 	// Append comment
-	function appendComment($file, $comment)
+	function appendComment($page, $comment)
 	{
 		// TODO: create directory
-		$file = $this->yellow->config->get("commentsDir").$file;
+		$file = $this->getCommentFileName($page);
 		$status = "send";
 		$content = "---\n";
 		$content.= "Uid: ".$comment->get("uid")."\n";
@@ -112,17 +152,27 @@ class YellowComments
 			flock($file, LOCK_EX);
 			fseek($fd, 0, SEEK_END);
 			$position = ftell($fd);
+			if($position==0)
+			{
+				$template = file_get_contents($this->yellow->config->get("commentsTemplate"));
+				if($template=="")
+				{
+					$template = "---\nTitle: Comments\nParser: Comments\n---\n";
+				}
+				fwrite($fd, $template);
+				$position = ftell($fd);
+			}
 			if($position+strlen($content)<$this->yellow->config->get("commentsMaxSize"))
 			{
 				if($position>0) fwrite($fd, $this->yellow->config->get("commentsSeparator")."\n");
 				fwrite($fd, $content);
 			} else {
-				$status = "error";
+				$status = "Error";
 			}
 			flock($file, LOCK_UN);
 			fclose($fd);
 		} else {
-			$status = "error";
+			$status = "Error";
 		}
 		return $status;
 	}
@@ -143,7 +193,6 @@ class YellowComments
 	// verify comment for safe use
 	function verifyComment($comment)
 	{
-		// TODO: better texts
 		// TODO: fold me :)
 		$status = "send";
 		$field = "";
@@ -164,8 +213,8 @@ class YellowComments
 		return $status;
 	}
 
-	// 
-	function processSend($file)
+	// Process user input
+	function processSend($page)
 	{
 		if(PHP_SAPI == "cli") $this->yellow->page->error(500, "Static website not supported!");
 		$status = trim($_REQUEST["status"]);
@@ -173,7 +222,7 @@ class YellowComments
 		{
 			$comment = $this->buildComment();
 			$status = $this->verifyComment($comment);
-			if($status=="send" && $this->yellow->config->get("commentsAutoAppend")) $status = $this->appendComment($file, $comment);
+			if($status=="send" && $this->yellow->config->get("commentsAutoAppend")) $status = $this->appendComment($page, $comment);
 			if($status=="send") $status = $this->sendEmail($comment);
 			if($status=="done")
 			{
@@ -208,14 +257,14 @@ class YellowComments
 		$mailHeaders .= "X-Remote-Addr: ".mb_encode_mimeheader($_SERVER["REMOTE_ADDR"])."\r\n";
 		$mailHeaders .= "Mime-Version: 1.0\r\n";
 		$mailHeaders .= "Content-Type: text/plain; charset=utf-8\r\n";
-		return mail($mailTo, $mailSubject, $mailMessage, $mailHeaders) ? "done" : "error";
+		return mail($mailTo, $mailSubject, $mailMessage, $mailHeaders) ? "done" : "Error";
 	}
 
 	// Return number of visible comments
-	function getCommentCount($comments)
+	function getCommentCount()
 	{
 		$count = 0;
-		foreach($comments as $comment)
+		foreach($this->comments as $comment)
 		{
 			if($comment->isPublished())
 			{
