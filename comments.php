@@ -55,7 +55,7 @@ class YellowComments
 		$this->yellow = $yellow;
 		$this->yellow->config->setDefault("commentsDir", "");
 		$this->yellow->config->setDefault("commentsExtension", "-comments");
-		$this->yellow->config->setDefault("commentsTemplate", "system/config/comment-template.txt");
+		$this->yellow->config->setDefault("commentsTemplate", "system/config/comments-template.txt");
 		$this->yellow->config->setDefault("commentsSeparator", "----");
 		$this->yellow->config->setDefault("commentsAutoAppend", "0");
 		$this->yellow->config->setDefault("commentsAutoPublish", "0");
