@@ -64,7 +64,7 @@
 <?php echo ($this->yellow->config->get("commentsAutoPublish")!="1")?$this->yellow->text->get("commentsManual"):"" ?>
 </p>
 <?php else: ?>
-<p><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
+<p class="comments_status"><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
 <?php endif ?>
 <?php endif ?>
 </div>
