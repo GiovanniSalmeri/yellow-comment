@@ -9,7 +9,7 @@
 <div class="<?php echo $yellow->page->getHtml("entryClass") ?>">
 <div class="entry-header">
 <h1 class="header_title"><span><?php echo $yellow->page->getHtml("titleContent") ?></span></h1>
-<h1 class="komm_title"><a href="#comments">
+<h1 class="comment_title"><a href="#comments">
 <?php echo $commentHandler->getCommentCount() ?>
 </a></h1>
 </div>
