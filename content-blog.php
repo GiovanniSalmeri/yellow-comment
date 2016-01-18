@@ -49,7 +49,7 @@
 
 <div class="content seperate"></div>
 
-<p><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
+<p class="comments_status"><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
 
 <form class="comments-form" action="<?php echo htmlspecialchars($yellow->page->getLocation()) ?>" method="post">
 <p class="comments-name"><label for="name"><?php echo $yellow->text->getHtml("contactName") ?></label><br /><input type="text" class="form-control<?php echo $commentHandler->required("name", " commentrequired") ?>" name="name" id="name" value="<?php echo htmlspecialchars($_REQUEST["name"]) ?>" /></p>
