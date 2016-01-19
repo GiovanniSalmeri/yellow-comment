@@ -177,11 +177,11 @@ class YellowComments
 			$fd = @fopen($file, "c");
 			if($fd!==false)
 			{
-				flock($file, LOCK_EX);
+				flock($fd, LOCK_EX);
 				fseek($fd, 0, SEEK_SET);
 				fwrite($fd, $content);
 				ftruncate($fd, ftell($fd));
-				flock($file, LOCK_UN);
+				flock($fd, LOCK_UN);
 				fclose($fd);
 			} else {
 				$error = "Error";
