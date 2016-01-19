@@ -60,7 +60,7 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsAutoAppend", "0");
 		$this->yellow->config->setDefault("commentsAutoPublish", "0");
 		$this->yellow->config->setDefault("commentsMaxSize", "10000");
-		$this->yellow->config->setDefault("commentSpamFilter", "href=|url=");
+		$this->yellow->config->setDefault("commentsSpamFilter", "href=|url=");
 		$this->requiredField = "";
 		$this->cleanup();
 	}
@@ -76,13 +76,13 @@ class YellowComments
 	// Cleanup datastructures
 	function onParseContentRaw($page, $text)
 	{
-		return ($page->get("parser")=="Comments")?$this->yellow->text->get("commentsWebinterfaceModify"):$text;
+		return (lcfirst($page->get("parser"))=="comments")?$this->yellow->text->get("commentsWebinterfaceModify"):$text;
 	}
 
 	// Handle page meta data parsing
 	function onParseMeta($page)
 	{
-		if($page->get("parser")=="Comments") $page->visible = false;
+		if(lcfirst($page->get("parser"))=="comments") $page->visible = false;
 	}
 
 	// Cleanup datastructures
@@ -90,6 +90,12 @@ class YellowComments
 	{
 		$this->comments = array();
 		$this->pageText = "";
+	}
+
+	// Return Email
+	function getEmail()
+	{
+		return $this->yellow->config->isExisting("commentsEmail")?$this->yellow->config->get("commentsEmail"):$this->yellow->page->get("commentsEmail");
 	}
 
 	// Return file name from page object (depending on settings)
@@ -138,51 +144,52 @@ class YellowComments
 		}
 	}
 	
-	// Append comment
-	function appendComment($page, $comment)
+	// Save comments
+	function saveComments($page, $checkSize)
 	{
 		// TODO: create directory
 		$file = $this->getCommentFileName($page);
-		$status = "send";
-		$content = "---\n";
-		$content.= "Uid: ".$comment->get("uid")."\n";
-		if($this->yellow->config->get("commentsAutoPublish")!="1") $content.= "Published: No\n";
-		$content.= "Name: ".$comment->get("name")."\n";
-		$content.= "From: ".$comment->get("from")."\n";
-		$content.= "Created: ".$comment->get("created")."\n";
-		if($comment->get("url")!="") $content.= "Url: ".$comment->get("url")."\n";
-		$content.= "---\n";
-		$content.= $comment->comment."\n";
+		$error = "";
 
-		$fd = @fopen($file, "c");
-		if($fd!==false)
+		if($this->pageText=="")
 		{
-			flock($file, LOCK_EX);
-			fseek($fd, 0, SEEK_END);
-			$position = ftell($fd);
-			if($position==0)
+			$this->pageText = file_get_contents($this->yellow->config->get("commentsTemplate"));
+			if($this->pageText=="")
 			{
-				$template = file_get_contents($this->yellow->config->get("commentsTemplate"));
-				if($template=="")
-				{
-					$template = "---\nTitle: Comments\nParser: Comments\n---\n";
-				}
-				fwrite($fd, $template);
-				$position = ftell($fd);
+				$this->pageText = "---\nTitle: Comments\nParser: comments\n---\n";
 			}
-			if($position+strlen($content)<$this->yellow->config->get("commentsMaxSize"))
-			{
-				if($position>0) fwrite($fd, $this->yellow->config->get("commentsSeparator")."\n");
-				fwrite($fd, $content);
-			} else {
-				$status = "Error";
-			}
-			flock($file, LOCK_UN);
-			fclose($fd);
-		} else {
-			$status = "Error";
 		}
-		return $status;
+
+		$content = $this->pageText;
+		foreach($this->comments as $comment)
+		{
+			$content.= $this->yellow->config->get("commentsSeparator")."\n";
+			$content.= "---\n";
+			foreach($comment->metaData as $key=>$value)
+			{
+				$content.= ucfirst($key).": ".$value."\n";
+			}
+			$content.= "---\n";
+			$content.= $comment->comment."\n";
+		}
+		if(strlen($content)<$this->yellow->config->get("commentsMaxSize") || !$checkSize)
+		{
+			$fd = @fopen($file, "c");
+			if($fd!==false)
+			{
+				flock($file, LOCK_EX);
+				fseek($fd, 0, SEEK_SET);
+				fwrite($fd, $content);
+				ftruncate($fd, ftell($fd));
+				flock($file, LOCK_UN);
+				fclose($fd);
+			} else {
+				$error = "Error";
+			}
+		} else {
+			$error = "Error";
+		}
+		return $error;
 	}
 
 	// Build comment from input
@@ -190,10 +197,13 @@ class YellowComments
 	{
 		$comment = new YellowComment;
 		$comment->set("name", filter_var(trim($_REQUEST["name"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
-		$comment->set("url", filter_var(trim($_REQUEST["url"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
+		$url = filter_var(trim($_REQUEST["url"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+		if($url!="") $comment->set("url", $url);
 		$comment->set("from", filter_var(trim($_REQUEST["from"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
 		$comment->set("created", date("Y-m-d H:i:s"));
 		$comment->set("uid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
+		$comment->set("aid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
+		if($this->yellow->config->get("commentsAutoPublish")!="1") $comment->set("published", "No");
 		$comment->comment = trim($_REQUEST["comment"]);
 		return $comment;
 	}
@@ -202,47 +212,70 @@ class YellowComments
 	function verifyComment($comment)
 	{
 		// TODO: fold me :)
-		$status = "send";
+		$error = "";
 		$field = "";
-		$spamFilter = $this->yellow->config->get("commentSpamFilter");
-		if(strempty($comment->comment)) { $field = "comment"; $status = "InvalidComment"; }
-		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) { $field = "comment"; $status = "Error"; }
-		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $status = "InvalidName"; }
-		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) { $field = "from"; $status = "InvalidMail"; }
-		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) { $field = "from"; $status = "InvalidMail"; }
-		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) { $field = "url"; $status = "InvalidUrl"; }
+		$spamFilter = $this->yellow->config->get("commentsSpamFilter");
+		if(strempty($comment->comment)) { $field = "comment"; $error = "InvalidComment"; }
+		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) { $field = "comment"; $error = "Error"; }
+		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $error = "InvalidName"; }
+		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) { $field = "from"; $error = "InvalidMail"; }
+		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) { $field = "from"; $error = "InvalidMail"; }
+		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) { $field = "url"; $error = "InvalidUrl"; }
 
 		$separator = $this->yellow->config->get("commentsSeparator");
-		if(strpos($comment->comment, $separator)!==false) { $field = "comment"; $status = "InvalidComment"; }
-		if(strpos($comment->get("name"), $separator)!==false) { $field = "name"; $status = "InvalidName"; }
-		if(strpos($comment->get("from"), $separator)!==false) { $field = "from"; $status = "InvalidMail"; }
-		if(strpos($comment->get("url"), $separator)!==false) { $field = "url"; $status = "InvalidUrl"; }
+		if(strpos($comment->comment, $separator)!==false) { $field = "comment"; $error = "InvalidComment"; }
+		if(strpos($comment->get("name"), $separator)!==false) { $field = "name"; $error = "InvalidName"; }
+		if(strpos($comment->get("from"), $separator)!==false) { $field = "from"; $error = "InvalidMail"; }
+		if(strpos($comment->get("url"), $separator)!==false) { $field = "url"; $error = "InvalidUrl"; }
 		$this->requiredField = $field;
-		return $status;
+		return $error;
 	}
 
 	// Process user input
 	function processSend($page)
 	{
 		if(PHP_SAPI == "cli") $this->yellow->page->error(500, "Static website not supported!");
+		$aid = trim($_REQUEST["aid"]);
+		$action = trim($_REQUEST["action"]);
+		if($aid!="")
+		{
+			$changed = false;
+			for($n=0; $n<count($this->comments); $n++)
+			{
+				if($this->comments[$n]->get("aid")==$aid)
+				{
+					if($action=="remove")
+					{
+						unset($this->comments[$n]);
+						$changed = true;
+						break;
+					} else if($action=="publish") {
+						$this->comments[$n]->set("published", null);
+						$changed = true;
+						break;
+					}
+				}
+			}
+			if($changed) $this->saveComments($page, false);
+		}
 		$status = trim($_REQUEST["status"]);
-		if($status == "send")
+		if($status=="send")
 		{
 			$comment = $this->buildComment();
-			$status = $this->verifyComment($comment);
-			if($status=="send" && $this->yellow->config->get("commentsAutoAppend")) $status = $this->appendComment($page, $comment);
-			if($status=="send") $status = $this->sendEmail($comment);
-			if($status=="done")
+			$error = $this->verifyComment($comment);
+			if($error=="") array_push($this->comments, $comment);
+			if($error=="" && $this->yellow->config->get("commentsAutoAppend")) $error = $this->saveComments($page, true);
+			if($error=="" && $this->getEmail()!="") $error = $this->sendEmail($comment);
+			if($error=="")
 			{
 				$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatusDone"));
+				$status = "done";
 			} else {
-				$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatus".$status));
-				$status = "invalid";
+				$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatus".$error));
 			}
 			$this->yellow->page->setHeader("Last-Modified", $this->yellow->toolbox->getHttpDateFormatted(time()));
 			$this->yellow->page->setHeader("Cache-Control", "no-cache, must-revalidate");
 		} else {
-			$status = "none";
 			$this->yellow->page->set("commentsStatus", $this->yellow->text->get("commentsStatusNone"));
 		}
 		$this->yellow->page->set("status", $status);
@@ -257,15 +290,23 @@ class YellowComments
 		$mailMessage.= "Mail: ".$comment->get("from")."\r\n";
 		$mailMessage.= "Url:  ".$comment->get("url")."\r\n";
 		$mailMessage.= "Uid:  ".$comment->get("uid")."\r\n";
-		$mailTo = $this->yellow->page->get("commentEmail");
-		if($this->yellow->config->isExisting("commentEmail")) $mailTo = $this->yellow->config->get("commentEmail");
+		$mailMessage.= "-- \r\n";
+		if($this->yellow->config->get("commentsAutoAppend"))
+		{
+			if($this->yellow->config->get("commentsAutoPublish")!="1")
+			{
+				$mailMessage.= "Publish: ".$this->yellow->page->getUrl()."?aid=".$comment->get("aid")."&action=publish\r\n";
+			} else {
+				$mailMessage.= "Remove: ".$this->yellow->page->getUrl()."?aid=".$comment->get("aid")."&action=remove\r\n";
+			}
+		}
 		$mailSubject = mb_encode_mimeheader($this->yellow->page->get("title"));
 		$mailHeaders = empty($from) ? "From: noreply\r\n" : "From: ".mb_encode_mimeheader($name)." <$from>\r\n";
 		$mailHeaders .= "X-Contact-Url: ".mb_encode_mimeheader($this->yellow->page->getUrl())."\r\n";
 		$mailHeaders .= "X-Remote-Addr: ".mb_encode_mimeheader($_SERVER["REMOTE_ADDR"])."\r\n";
 		$mailHeaders .= "Mime-Version: 1.0\r\n";
 		$mailHeaders .= "Content-Type: text/plain; charset=utf-8\r\n";
-		return mail($mailTo, $mailSubject, $mailMessage, $mailHeaders) ? "done" : "Error";
+		return mail($this->getEmail(), $mailSubject, $mailMessage, $mailHeaders) ? "" : "Error";
 	}
 
 	// Return number of visible comments
@@ -289,5 +330,5 @@ class YellowComments
 	}
 } 
 
-$yellow->plugins->register("Comments", "YellowComments", YellowComments::Version);
+$yellow->plugins->register("comments", "YellowComments", YellowComments::Version);
 ?>

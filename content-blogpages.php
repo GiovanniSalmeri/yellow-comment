@@ -1,4 +1,4 @@
-<?php $commentHandler = $yellow->plugins->get("Comments") ?>
+<?php $commentHandler = $yellow->plugins->get("comments") ?>
 <div class="content main">
 
 <?php if($yellow->page->isExisting("titleBlog")): ?>

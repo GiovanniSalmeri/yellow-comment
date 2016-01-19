@@ -1,6 +1,6 @@
-<?php $commentHandler = $yellow->plugins->get("Comments") ?>
-<?php $commentHandler->processSend($yellow->page) ?>
+<?php $commentHandler = $yellow->plugins->get("comments") ?>
 <?php $commentHandler->loadComments($yellow->page) ?>
+<?php $commentHandler->processSend($yellow->page) ?>
 <div class="content main">
 <?php $yellow->page->set("entryClass", "entry") ?>
 <?php if($yellow->page->isExisting("tag")): ?>
@@ -44,8 +44,8 @@
 
 <!-- comments end -->
 
-<?php if($yellow->page->get("parser") != "Comments"): ?>
-<?php if($yellow->page->get("status") != "done"): ?>
+<?php if($yellow->page->get("parser")!="comments" && !$commentHandler->isWebinterface($yellow->page)): ?>
+<?php if($yellow->page->get("status")!="done"): ?>
 
 <div class="content seperate"></div>
 
