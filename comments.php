@@ -37,7 +37,7 @@ class YellowComment
 	// Check if comment was published
 	function isPublished()
 	{
-		return !$this->isExisting("published") || $this->get("published")=="yes";
+		return !$this->isExisting("published") || lcfirst($this->get("published"))=="yes";
 	}
 }
 
@@ -60,6 +60,8 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsAutoAppend", "0");
 		$this->yellow->config->setDefault("commentsAutoPublish", "0");
 		$this->yellow->config->setDefault("commentsMaxSize", "10000");
+		$this->yellow->config->setDefault("commentsTimeout", "7");
+		$this->yellow->config->setDefault("commentsUrlHighlight", "1");
 		$this->yellow->config->setDefault("commentsSpamFilter", "href=|url=");
 		$this->requiredField = "";
 		$this->cleanup();
@@ -160,17 +162,21 @@ class YellowComments
 			}
 		}
 
+		$timeout = time()-$this->yellow->config->get("commentsTimeout")*24*60*60;
 		$content = $this->pageText;
 		foreach($this->comments as $comment)
 		{
-			$content.= $this->yellow->config->get("commentsSeparator")."\n";
-			$content.= "---\n";
-			foreach($comment->metaData as $key=>$value)
+			if($comment->isPublished() || !$comment->isExisting("created") || $timeout<strtotime($comment->get("created")))
 			{
-				$content.= ucfirst($key).": ".$value."\n";
+				$content.= $this->yellow->config->get("commentsSeparator")."\n";
+				$content.= "---\n";
+				foreach($comment->metaData as $key=>$value)
+				{
+					$content.= ucfirst($key).": ".$value."\n";
+				}
+				$content.= "---\n";
+				$content.= $comment->comment."\n";
 			}
-			$content.= "---\n";
-			$content.= $comment->comment."\n";
 		}
 		if(strlen($content)<$this->yellow->config->get("commentsMaxSize") || !$checkSize)
 		{
@@ -327,6 +333,17 @@ class YellowComments
 	function required($field, $default)
 	{
 		return ($this->requiredField==$field)?$default:"";
+	}
+
+	// Transform text to html with options
+	function transformText($text)
+	{
+		$text = preg_replace("/\r/", "", $text);
+		if($this->yellow->config->get("commentsUrlHighlight")) $text = preg_replace("/((http|https|ftp):\/\/\S+[^\?\!\'\"\,\.\;\:\s]+)/", "\r$1\r", $text);
+		$text = htmlspecialchars($text);
+		$text = preg_replace("/\r(.*?)\r/", "<a href=\"$1\">$1</a>", $text);
+		$text = preg_replace("/\n/", "<br/>", $text);
+		return $text;
 	}
 } 
 
