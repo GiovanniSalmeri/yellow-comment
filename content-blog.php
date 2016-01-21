@@ -35,6 +35,7 @@
 <a name="<?php echo $comment->getHtml("uid") ?>"></a>
 <div class="commentname">
 <a href="<?php echo ($comment->getHtml("url")=="")?$yellow->page->getLocation():$comment->getHtml("url")?>"><?php echo $comment->getHtml("name") ?></a>:</div>
+<div class="commenticon"><img style="height:3em; width:3em;" src="data:image/png;base64,<?php echo base64_encode($commentHandler->getUserIcon($comment)) ?>"/></div>
 <div class="commentcontent"><?php echo $commentHandler->transformText($comment->comment) ?></div>
 <div class="commentdate"><?php echo $this->yellow->text->normaliseDate($comment->get("created")) ?></div>
 </div>

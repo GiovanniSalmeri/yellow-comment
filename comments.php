@@ -63,6 +63,8 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsTimeout", "7");
 		$this->yellow->config->setDefault("commentsUrlHighlight", "1");
 		$this->yellow->config->setDefault("commentsSpamFilter", "href=|url=");
+		$this->yellow->config->setDefault("commentsIconBackgroundColor", "ffffff");
+		$this->yellow->config->setDefault("commentsIconForegroundColors", "ff0000,cf0000,00ff00,00cf00,0000ff,0000cf,ffcf000,cfff00,00ffcf,00cfff,cf00ff,ff00cf");
 		$this->requiredField = "";
 		$this->cleanup();
 	}
@@ -345,7 +347,42 @@ class YellowComments
 		$text = preg_replace("/\n/", "<br/>", $text);
 		return $text;
 	}
-} 
 
+	// Get user icon (TODO: make me beautiful :) )
+	function getUserIcon($comment)
+	{
+		$hash = hexdec(substr(hash("sha256", $comment->get("name")."\n".$comment->get("from")), 0, 6));
+		$color_background = hexdec($this->yellow->config->get("commentsIconBackgroundColor"));
+		$colors = explode(",", $this->yellow->config->get("commentsIconForegroundColors"));
+		$color_foreground = hexdec(trim($colors[($hash>>(5*3))%count($colors)]));
+		$multiplicator = 8;
+		$size = 5*8*$multiplicator;
+		$png = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52";
+		$png .= "\x00\x00".chr(($size>>8)&0xff).chr(($size>>0)&0xff);
+		$png .= "\x00\x00".chr(($size>>8)&0xff).chr(($size>>0)&0xff);
+		$png .= "\x01\x03\x00\x00\x00";
+		$png .= hash("crc32b", substr($png, 0xc), true);
+		$png .= "\x00\x00\x00\x06\x50\x4c\x54\x45";
+		$png .= chr(($color_foreground>>16)&0xff).chr(($color_foreground>>8)&0xff).chr(($color_foreground>>0)&0xff);
+		$png .= chr(($color_background>>16)&0xff).chr(($color_background>>8)&0xff).chr(($color_background>>0)&0xff);
+		$png .= hash("crc32b", substr($png, 0x25), true);
+		$map = array(0, 1, 2, 1, 0);
+		for($y=0; $y<5*8*$multiplicator; $y++)
+		{
+			$pixel .= "\x00";
+			for($x=0; $x<5; $x++)
+			{
+				$pixel .= str_repeat(((($hash>>(intval($y/(8*$multiplicator))*5+$map[$x]))&1)==1)?"\xff":"\x00", $multiplicator);
+			}
+		}
+		$pixel = gzcompress($pixel, 6, ZLIB_ENCODING_DEFLATE);
+		$length = strlen($pixel);
+		$png .= "\x00\x00".chr(($length>>8)&0xff).chr(($length>>0)&0xff);
+		$png .= "\x49\x44\x41\x54".$pixel;
+		$png .= hash("crc32b", substr($png, 0x37), true);
+		$png .= "\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82";
+		return $png;
+	}
+}
 $yellow->plugins->register("comments", "YellowComments", YellowComments::Version);
 ?>
