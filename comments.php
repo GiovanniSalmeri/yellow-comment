@@ -65,6 +65,9 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsSpamFilter", "href=|url=");
 		$this->yellow->config->setDefault("commentsIconBackgroundColor", "ffffff");
 		$this->yellow->config->setDefault("commentsIconForegroundColors", "ff0000,cf0000,00ff00,00cf00,0000ff,0000cf,ffcf000,cfff00,00ffcf,00cfff,cf00ff,ff00cf");
+		$this->yellow->config->setDefault("commentsIconSize", "2");
+		$this->yellow->config->setDefault("commentsIconGravatar", "0");
+		$this->yellow->config->setDefault("commentsIconGravatarOptions", "s=80&d=mm&r=g");
 		$this->requiredField = "";
 		$this->cleanup();
 	}
@@ -348,36 +351,47 @@ class YellowComments
 		return $text;
 	}
 
-	// Get user icon (TODO: make me beautiful :) )
+	// Get user icon
 	function getUserIcon($comment)
+	{
+		if($this->yellow->config->get("commentsIconGravatar"))
+		{
+			return "http://www.gravatar.com/avatar/".hash("md5", strtolower(trim($comment->get("from"))))."?".$this->yellow->config->get("commentsIconGravatarOptions");
+		} else {
+			return "data:image/png;base64,".base64_encode($this->getUserIconPng($comment));
+		}
+	}
+
+	// Get user icon without any service (TODO: make me more beautiful :) )
+	function getUserIconPng($comment)
 	{
 		$hash = hexdec(substr(hash("sha256", $comment->get("name")."\n".$comment->get("from")), 0, 6));
 		$color_background = hexdec($this->yellow->config->get("commentsIconBackgroundColor"));
 		$colors = explode(",", $this->yellow->config->get("commentsIconForegroundColors"));
 		$color_foreground = hexdec(trim($colors[($hash>>(5*3))%count($colors)]));
-		$multiplicator = 8;
+		$multiplicator = $this->yellow->config->get("commentsIconSize");
 		$size = 5*8*$multiplicator;
 		$png = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52";
-		$png .= "\x00\x00".chr(($size>>8)&0xff).chr(($size>>0)&0xff);
-		$png .= "\x00\x00".chr(($size>>8)&0xff).chr(($size>>0)&0xff);
+		$png .= pack("N", $size).pack("N", $size);
 		$png .= "\x01\x03\x00\x00\x00";
 		$png .= hash("crc32b", substr($png, 0xc), true);
 		$png .= "\x00\x00\x00\x06\x50\x4c\x54\x45";
-		$png .= chr(($color_foreground>>16)&0xff).chr(($color_foreground>>8)&0xff).chr(($color_foreground>>0)&0xff);
-		$png .= chr(($color_background>>16)&0xff).chr(($color_background>>8)&0xff).chr(($color_background>>0)&0xff);
+		$png .= substr(pack("N", $color_foreground), 1);
+		$png .= substr(pack("N", $color_background), 1);
 		$png .= hash("crc32b", substr($png, 0x25), true);
 		$map = array(0, 1, 2, 1, 0);
-		for($y=0; $y<5*8*$multiplicator; $y++)
+		for($y=0; $y<5; $y++)
 		{
-			$pixel .= "\x00";
+			$line = "\x00";
 			for($x=0; $x<5; $x++)
 			{
-				$pixel .= str_repeat(((($hash>>(intval($y/(8*$multiplicator))*5+$map[$x]))&1)==1)?"\xff":"\x00", $multiplicator);
+				$line .= str_repeat(((($hash>>($y*5+$map[$x]))&1)==1)?"\xff":"\x00", $multiplicator);
 			}
+			$pixel .= str_repeat($line, 8*$multiplicator);
 		}
-		$pixel = gzcompress($pixel, 6, ZLIB_ENCODING_DEFLATE);
+		$pixel = gzcompress($pixel, 6);
 		$length = strlen($pixel);
-		$png .= "\x00\x00".chr(($length>>8)&0xff).chr(($length>>0)&0xff);
+		$png .= pack("N", $length);
 		$png .= "\x49\x44\x41\x54".$pixel;
 		$png .= hash("crc32b", substr($png, 0x37), true);
 		$png .= "\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82";
