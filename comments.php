@@ -348,6 +348,14 @@ class YellowComments
 		$text = htmlspecialchars($text);
 		$text = preg_replace("/\r(.*?)\r/", "<a href=\"$1\">$1</a>", $text);
 		$text = preg_replace("/\n/", "<br/>", $text);
+		foreach($this->yellow->plugins->plugins as $key=>$value)
+		{
+			if(method_exists($value["obj"], "onParseContentText"))
+			{
+				$output = $value["obj"]->onParseContentText($this->yellow->page, $text);
+				if(!is_null($output)) $text = $output;
+			}
+		}
 		return $text;
 	}
 
@@ -356,7 +364,8 @@ class YellowComments
 	{
 		if($this->yellow->config->get("commentsIconGravatar"))
 		{
-			return "http://www.gravatar.com/avatar/".hash("md5", strtolower(trim($comment->get("from"))))."?".$this->yellow->config->get("commentsIconGravatarOptions");
+			$base = ($this->yellow->config->get("serverScheme")=="http")?"http://www.gravatar.com/avatar/":"https://secure.gravatar.com/avatar/";
+			return $base.hash("md5", strtolower(trim($comment->get("from"))))."?".$this->yellow->config->get("commentsIconGravatarOptions");
 		} else {
 			return "data:image/png;base64,".base64_encode($this->getUserIconPng($comment));
 		}
