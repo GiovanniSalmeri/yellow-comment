@@ -29,9 +29,10 @@
 
 <div class="comments">
 <h1><span><?php echo $this->yellow->text->get("commentsComments")." ".$commentHandler->getCommentCount() ?></span></h1>
+<?php $i = 0; ?>
 <?php foreach($commentHandler->comments as $comment) { ?> 
 <?php if($comment->isPublished()) { ?>
-<div class="comment">
+<div class="comment <?php $i++; if($i&1) { echo 'odd';} else {echo 'even';} ?>">
 <a name="<?php echo $comment->getHtml("uid") ?>"></a>
 <div class="commentname">
 <a href="<?php echo ($comment->getHtml("url")=="")?$yellow->page->getLocation():$comment->getHtml("url")?>"><?php echo $comment->getHtml("name") ?></a>:</div>
