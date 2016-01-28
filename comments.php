@@ -216,6 +216,15 @@ class YellowComments
 		$comment->set("aid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
 		if($this->yellow->config->get("commentsAutoPublish")!="1") $comment->set("published", "No");
 		$comment->comment = trim($_REQUEST["comment"]);
+
+		foreach($this->yellow->plugins->plugins as $key=>$value)
+		{
+			if(method_exists($value["obj"], "onEmojiTransformShortToUtf8"))
+			{
+				$output = $value["obj"]->onEmojiTransformShortToUtf8($comment->comment);
+				if(!is_null($output)) $comment->comment = $output;
+			}
+		}
 		return $comment;
 	}
 
