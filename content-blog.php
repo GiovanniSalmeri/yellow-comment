@@ -1,6 +1,8 @@
 <?php $commentHandler = $yellow->plugins->get("comments") ?>
-<?php $commentHandler->loadComments($yellow->page) ?>
-<?php $commentHandler->processSend($yellow->page) ?>
+<?php $commentHandler->lockComments($yellow->page) ?>
+<?php $commentHandler->loadComments() ?>
+<?php $commentHandler->processSend() ?>
+<?php $commentHandler->unlockComments() ?>
 <div class="content main">
 <?php $yellow->page->set("entryClass", "entry") ?>
 <?php if($yellow->page->isExisting("tag")): ?>

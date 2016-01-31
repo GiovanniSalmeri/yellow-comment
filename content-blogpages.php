@@ -13,7 +13,9 @@
 <div class="entry-header">
 	<h1 class="header_title"><a href="<?php echo $page->getLocation() ?>"><?php echo $page->getHtml("title") ?></a></h1>
 	<h1 class="comment_title"><a href="<?php echo $page->getLocation() ?>#comments">
-	<?php $commentHandler->loadComments($page) ?>
+	<?php $commentHandler->lockComments($page) ?>
+	<?php $commentHandler->loadComments() ?>
+	<?php $commentHandler->unlockComments() ?>
 	<?php echo $commentHandler->getCommentCount() ?>
 	</a></h1>
 </div>

@@ -48,6 +48,7 @@ class YellowComments
 	var $requiredField;
 	var $comments;
 	var $pageText;
+	var $fileHandle;
 	
 	// Handle initialisation
 	function onLoad($yellow)
@@ -122,40 +123,57 @@ class YellowComments
 	}
 	
 	// Load comments from given file name
-	function loadComments($page)
+	function lockComments($page)
 	{
-		$file = $this->getCommentFileName($page);
+		if($this->fileHandle!=null)
+			return;
+		// TODO: create directory
+		$this->fileHandle = @fopen($this->getCommentFileName($page), "c+");
+		flock($this->fileHandle, LOCK_EX);
+	}
+
+	// Load comments from given file name
+	function unlockComments()
+	{
+		if($this->fileHandle==null)
+			return;
+		flock($this->fileHandle, LOCK_UN);
+		fclose($this->fileHandle);
+		$this->fileHandle = null;
+	}
+
+	// Load comments from given file name
+	function loadComments()
+	{
 		$this->cleanup();
-		if(file_exists($file))
+		fseek($this->fileHandle, 0, SEEK_END);
+		$length = ftell($this->fileHandle);
+		fseek($this->fileHandle, 0, SEEK_SET);
+		$contents = explode($this->yellow->config->get("commentsSeparator"), fread($this->fileHandle, $length));
+		if(count($contents>0))
 		{
-			$contents = explode($this->yellow->config->get("commentsSeparator"), file_get_contents($file));
-			if(count($contents>0))
+			$pageText = $contents[0];
+			unset($contents[0]);
+			foreach($contents as $content)
 			{
-				$pageText = $contents[0];
-				unset($contents[0]);
-				foreach($contents as $content)
+				if(preg_match("/^(\xEF\xBB\xBF)?[\r\n]*\-\-\-[\r\n]+(.+?)[\r\n]+\-\-\-[\r\n]+(.*)/s", $content, $parts))
 				{
-					if(preg_match("/^(\xEF\xBB\xBF)?[\r\n]*\-\-\-[\r\n]+(.+?)[\r\n]+\-\-\-[\r\n]+(.*)/s", $content, $parts))
+					$comment = new YellowComment;
+					foreach(preg_split("/[\r\n]+/", $parts[2]) as $line)
 					{
-						$comment = new YellowComment;
-						foreach(preg_split("/[\r\n]+/", $parts[2]) as $line)
-						{
-							preg_match("/^\s*(.*?)\s*:\s*(.*?)\s*$/", $line, $matches);
-							if(!empty($matches[1]) && !strempty($matches[2])) $comment->set(lcfirst($matches[1]), $matches[2]);
-						}
-						$comment->comment = trim($parts[3]);
-						array_push($this->comments, $comment);
+						preg_match("/^\s*(.*?)\s*:\s*(.*?)\s*$/", $line, $matches);
+						if(!empty($matches[1]) && !strempty($matches[2])) $comment->set(lcfirst($matches[1]), $matches[2]);
 					}
+					$comment->comment = trim($parts[3]);
+					array_push($this->comments, $comment);
 				}
 			}
 		}
 	}
 	
 	// Save comments
-	function saveComments($page, $checkSize)
+	function saveComments($checkSize)
 	{
-		// TODO: create directory
-		$file = $this->getCommentFileName($page);
 		$error = "";
 
 		if($this->pageText=="")
@@ -185,15 +203,11 @@ class YellowComments
 		}
 		if(strlen($content)<$this->yellow->config->get("commentsMaxSize") || !$checkSize)
 		{
-			$fd = @fopen($file, "c");
-			if($fd!==false)
+			if($this->fileHandle!==false)
 			{
-				flock($fd, LOCK_EX);
-				fseek($fd, 0, SEEK_SET);
-				fwrite($fd, $content);
-				ftruncate($fd, ftell($fd));
-				flock($fd, LOCK_UN);
-				fclose($fd);
+				fseek($this->fileHandle, 0, SEEK_SET);
+				fwrite($this->fileHandle, $content);
+				ftruncate($this->fileHandle, ftell($this->fileHandle));
 			} else {
 				$error = "Error";
 			}
@@ -252,7 +266,7 @@ class YellowComments
 	}
 
 	// Process user input
-	function processSend($page)
+	function processSend()
 	{
 		if(PHP_SAPI == "cli") $this->yellow->page->error(500, "Static website not supported!");
 		$aid = trim($_REQUEST["aid"]);
@@ -276,7 +290,7 @@ class YellowComments
 					}
 				}
 			}
-			if($changed) $this->saveComments($page, false);
+			if($changed) $this->saveComments(false);
 		}
 		$status = trim($_REQUEST["status"]);
 		if($status=="send")
@@ -284,7 +298,7 @@ class YellowComments
 			$comment = $this->buildComment();
 			$error = $this->verifyComment($comment);
 			if($error=="") array_push($this->comments, $comment);
-			if($error=="" && $this->yellow->config->get("commentsAutoAppend")) $error = $this->saveComments($page, true);
+			if($error=="" && $this->yellow->config->get("commentsAutoAppend")) $error = $this->saveComments(true);
 			if($error=="" && $this->getEmail()!="") $error = $this->sendEmail($comment);
 			if($error=="")
 			{
