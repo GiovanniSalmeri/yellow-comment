@@ -84,5 +84,9 @@ A short overview over the settings so far:
 
   Set the [Gravatar](https://en.gravatar.com/) image options. Please consult the service website.
 
+* `commentsBlacklist` (default: `system/config/comments-blacklist.ini`)
+
+  A file which contains all mail addresses to blacklist. Comments with these addresses are not shown in the output any longer.
+
 
 

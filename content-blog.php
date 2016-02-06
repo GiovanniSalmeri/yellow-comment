@@ -33,13 +33,13 @@
 <h1><span><?php echo $this->yellow->text->get("commentsComments")." ".$commentHandler->getCommentCount() ?></span></h1>
 <?php $i = 0; ?>
 <?php foreach($commentHandler->comments as $comment) { ?> 
-<?php if($comment->isPublished()) { ?>
+<?php if($comment->isPublished() && !$commentHandler->isBlacklisted($comment)) { ?>
 <div class="comment <?php $i++; if($i&1) { echo 'odd';} else {echo 'even';} ?>">
 <a name="<?php echo $comment->getHtml("uid") ?>"></a>
 <div class="commentname">
 <a href="<?php echo ($comment->getHtml("url")=="")?$yellow->page->getLocation():$comment->getHtml("url")?>"><?php echo $comment->getHtml("name") ?></a>:</div>
 <div class="commenticon"><img src="<?php echo $commentHandler->getUserIcon($comment) ?>"/></div>
-<div class="commentcontent"><?php echo $commentHandler->transformText($comment->comment) ?></div>
+<div class="commentcontent"><?php echo $commentHandler->transformText($yellow->page, $comment->comment) ?></div>
 <div class="commentdate"><?php echo $this->yellow->text->normaliseDate($comment->get("created")) ?></div>
 </div>
 <?php } ?>

@@ -49,6 +49,7 @@ class YellowComments
 	var $comments;
 	var $pageText;
 	var $fileHandle;
+	var $blacklist;
 	
 	// Handle initialisation
 	function onLoad($yellow)
@@ -69,6 +70,7 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsIconSize", "2");
 		$this->yellow->config->setDefault("commentsIconGravatar", "0");
 		$this->yellow->config->setDefault("commentsIconGravatarOptions", "s=80&d=mm&r=g");
+		$this->yellow->config->setDefault("commentsBlacklist", "system/config/comments-blacklist.ini");
 		$this->requiredField = "";
 		$this->cleanup();
 	}
@@ -91,6 +93,21 @@ class YellowComments
 	function onParseMeta($page)
 	{
 		if(lcfirst($page->get("parser"))=="comments") $page->visible = false;
+	}
+
+	// Load blacklist from file
+	function loadBlacklist()
+	{
+		if(!is_null($this->blacklist))
+			return;
+		$load = @file($this->yellow->config->get("commentsBlacklist"), FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+		if($load!==false) $this->blacklist = array_flip($load);
+	}
+
+	// Check if mail account of comment is blacklisted
+	function isBlacklisted($comment)
+	{
+		return isset($this->blacklist[$comment->get("from")]);
 	}
 
 	// Cleanup datastructures
@@ -125,6 +142,7 @@ class YellowComments
 	// Load comments from given file name
 	function lockComments($page)
 	{
+		$this->loadBlacklist();
 		if($this->fileHandle!=null)
 			return;
 		// TODO: create directory
@@ -178,7 +196,7 @@ class YellowComments
 
 		if($this->pageText=="")
 		{
-			$this->pageText = file_get_contents($this->yellow->config->get("commentsTemplate"));
+			$this->pageText = @file_get_contents($this->yellow->config->get("commentsTemplate"));
 			if($this->pageText=="")
 			{
 				$this->pageText = "---\nTitle: Comments\nParser: comments\n---\n";
@@ -218,7 +236,7 @@ class YellowComments
 	}
 
 	// Build comment from input
-	function buildComment()
+	function buildComment($page)
 	{
 		$comment = new YellowComment;
 		$comment->set("name", filter_var(trim($_REQUEST["name"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
@@ -231,14 +249,8 @@ class YellowComments
 		if($this->yellow->config->get("commentsAutoPublish")!="1") $comment->set("published", "No");
 		$comment->comment = trim($_REQUEST["comment"]);
 
-		foreach($this->yellow->plugins->plugins as $key=>$value)
-		{
-			if(method_exists($value["obj"], "onEmojiTransformShortToUtf8"))
-			{
-				$output = $value["obj"]->onEmojiTransformShortToUtf8($comment->comment);
-				if(!is_null($output)) $comment->comment = $output;
-			}
-		}
+		$output = $page->parseContentBlock("emojishorttoutf8", $comment->comment, true);
+		if(!is_null($output)) $comment->comment = $output;
 		return $comment;
 	}
 
@@ -295,7 +307,7 @@ class YellowComments
 		$status = trim($_REQUEST["status"]);
 		if($status=="send")
 		{
-			$comment = $this->buildComment();
+			$comment = $this->buildComment($this->yellow->page);
 			$error = $this->verifyComment($comment);
 			if($error=="") array_push($this->comments, $comment);
 			if($error=="" && $this->yellow->config->get("commentsAutoAppend")) $error = $this->saveComments(true);
@@ -349,7 +361,7 @@ class YellowComments
 		$count = 0;
 		foreach($this->comments as $comment)
 		{
-			if($comment->isPublished())
+			if($comment->isPublished() && !$this->isBlacklisted($comment))
 			{
 				$count++;
 			}
@@ -364,21 +376,15 @@ class YellowComments
 	}
 
 	// Transform text to html with options
-	function transformText($text)
+	function transformText($page, $text)
 	{
 		$text = preg_replace("/\r/", "", $text);
-		if($this->yellow->config->get("commentsUrlHighlight")) $text = preg_replace("/((http|https|ftp):\/\/\S+[^\?\!\'\"\,\.\;\:\s]+)/", "\r$1\r", $text);
+		if($this->yellow->config->get("commentsUrlHighlight")) $text = preg_replace("/((http|https|ftp):\/\/\S+[^\>\?\!\'\"\,\.\;\:\s]+)/", "\r$1\r", $text);
 		$text = htmlspecialchars($text);
 		$text = preg_replace("/\r(.*?)\r/", "<a href=\"$1\">$1</a>", $text);
 		$text = preg_replace("/\n/", "<br/>", $text);
-		foreach($this->yellow->plugins->plugins as $key=>$value)
-		{
-			if(method_exists($value["obj"], "onParseContentText"))
-			{
-				$output = $value["obj"]->onParseContentText($this->yellow->page, $text);
-				if(!is_null($output)) $text = $output;
-			}
-		}
+		$output = $page->parseContentBlock("emojifyHTML", $text, true);
+		if(!is_null($output)) $text = $output;
 		return $text;
 	}
 
