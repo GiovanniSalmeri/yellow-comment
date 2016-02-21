@@ -180,7 +180,11 @@ class YellowComments
 					foreach(preg_split("/[\r\n]+/", $parts[2]) as $line)
 					{
 						preg_match("/^\s*(.*?)\s*:\s*(.*?)\s*$/", $line, $matches);
-						if(!empty($matches[1]) && !strempty($matches[2])) $comment->set(lcfirst($matches[1]), $matches[2]);
+						if(!empty($matches[1]) && !strempty($matches[2]))
+						{
+							$comment->set(lcfirst($matches[1]), $matches[2]);
+							if(lcfirst($matches[1])=="created") $this->yellow->page->setLastModified(strtotime($matches[2]));
+						}
 					}
 					$comment->comment = trim($parts[3]);
 					array_push($this->comments, $comment);
