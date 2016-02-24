@@ -1,5 +1,5 @@
 <?php $commentHandler = $yellow->plugins->get("comments") ?>
-<?php $commentHandler->lockComments($yellow->page) ?>
+<?php $commentHandler->lockComments($yellow->page, false) ?>
 <?php $commentHandler->loadComments() ?>
 <?php $commentHandler->processSend() ?>
 <?php $commentHandler->unlockComments() ?>

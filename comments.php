@@ -73,6 +73,7 @@ class YellowComments
 		$this->yellow->config->setDefault("commentsBlacklist", "system/config/comments-blacklist.ini");
 		$this->requiredField = "";
 		$this->cleanup();
+		$this->fileHandle = null;
 	}
 
 	// Check if the web interface is active
@@ -140,14 +141,17 @@ class YellowComments
 	}
 	
 	// Load comments from given file name
-	function lockComments($page)
+	function lockComments($page, $forceOpen)
 	{
 		$this->loadBlacklist();
 		if($this->fileHandle!=null)
 			return;
 		// TODO: create directory
-		$this->fileHandle = @fopen($this->getCommentFileName($page), "c+");
-		flock($this->fileHandle, LOCK_EX);
+		$fileName = $this->getCommentFileName($page);
+		if(file_exists($fileName) || $forceOpen)
+			$this->fileHandle = @fopen($fileName, "c+");
+		if($this->fileHandle!=null)
+			flock($this->fileHandle, LOCK_EX);
 	}
 
 	// Load comments from given file name
@@ -164,10 +168,12 @@ class YellowComments
 	function loadComments()
 	{
 		$this->cleanup();
+		if($this->fileHandle==null)
+			return;
 		fseek($this->fileHandle, 0, SEEK_END);
 		$length = ftell($this->fileHandle);
 		fseek($this->fileHandle, 0, SEEK_SET);
-		$contents = explode($this->yellow->config->get("commentsSeparator"), fread($this->fileHandle, $length));
+		$contents = explode($this->yellow->config->get("commentsSeparator"), ($length>0)?fread($this->fileHandle, $length):"");
 		if(count($contents>0))
 		{
 			$pageText = $contents[0];
@@ -198,6 +204,7 @@ class YellowComments
 	{
 		$error = "";
 
+		$this->lockComments($this->yellow->page, true);
 		if($this->pageText=="")
 		{
 			$this->pageText = @file_get_contents($this->yellow->config->get("commentsTemplate"));
