@@ -1,3 +1,4 @@
+Language: en
 # Additional texts for comment plugin
 ContactUrl: Webpage:
 CommentsComments: Comments:

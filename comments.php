@@ -259,9 +259,6 @@ class YellowComments
 		$comment->set("aid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
 		if($this->yellow->config->get("commentsAutoPublish")!="1") $comment->set("published", "No");
 		$comment->comment = trim($_REQUEST["comment"]);
-
-		$output = $page->parseContentBlock("emojishorttoutf8", $comment->comment, true);
-		if(!is_null($output)) $comment->comment = $output;
 		return $comment;
 	}
 
@@ -274,7 +271,7 @@ class YellowComments
 		$spamFilter = $this->yellow->config->get("commentsSpamFilter");
 		if(strempty($comment->comment)) { $field = "comment"; $error = "InvalidComment"; }
 		if(!strempty($comment->comment) && preg_match("/$spamFilter/i", $comment->comment)) { $field = "comment"; $error = "Error"; }
-		if(!strempty($comment->get("name")) && preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $error = "InvalidName"; }
+		if(strempty($comment->get("name")) || preg_match("/[^\pL\d\-\. ]/u", $comment->get("name"))) { $field = "name"; $error = "InvalidName"; }
 		if(!strempty($comment->get("from")) && !filter_var($comment->get("from"), FILTER_VALIDATE_EMAIL)) { $field = "from"; $error = "InvalidMail"; }
 		if(!strempty($comment->get("from")) && preg_match("/[^\w\-\.\@ ]/", $comment->get("from"))) { $field = "from"; $error = "InvalidMail"; }
 		if(!strempty($comment->get("url")) && !preg_match("/^https?\:\/\//i", $comment->get("url"))) { $field = "url"; $error = "InvalidUrl"; }
@@ -392,10 +389,20 @@ class YellowComments
 		$text = preg_replace("/\r/", "", $text);
 		if($this->yellow->config->get("commentsUrlHighlight")) $text = preg_replace("/((http|https|ftp):\/\/\S+[^\>\?\!\'\"\,\.\;\:\s]+)/", "\r$1\r", $text);
 		$text = htmlspecialchars($text);
-		$text = preg_replace("/\r(.*?)\r/", "<a href=\"$1\">$1</a>", $text);
-		$text = preg_replace("/\n/", "<br/>", $text);
-		$output = $page->parseContentBlock("emojifyHTML", $text, true);
-		if(!is_null($output)) $text = $output;
+		$urls = explode("\r", $text);
+		for($n=0; $n<count($urls); $n++)
+		{
+			if(($n%2)==0)
+			{
+				if($this->yellow->plugins->isExisting("emojiawesome"))
+				{
+					$urls[$n] = $this->yellow->plugins->get("emojiawesome")->normaliseText($urls[$n], true, true);
+				}
+			} else {
+				$urls[$n] = "<a href=\"".$urls[n]."\">".$urls[$n]."</a>";
+			}
+		}
+		$text = preg_replace("/\n/", "<br/>", implode($urls));
 		return $text;
 	}
 

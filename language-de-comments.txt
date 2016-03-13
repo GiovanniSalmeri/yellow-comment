@@ -1,3 +1,4 @@
+Language: de
 # Additional texts for comment plugin
 ContactUrl: Webseite:
 CommentsComments: Kommentar:
