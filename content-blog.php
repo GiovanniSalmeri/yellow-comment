@@ -9,19 +9,14 @@
 <?php foreach(preg_split("/,\s*/", $yellow->page->get("tag")) as $tag) { $yellow->page->set("entryClass", $yellow->page->get("entryClass")." ".$yellow->toolbox->normaliseArgs($tag, false)); } ?>
 <?php endif ?>
 <div class="<?php echo $yellow->page->getHtml("entryClass") ?>">
-<div class="entry-header">
-<h1 class="header_title"><span><?php echo $yellow->page->getHtml("titleContent") ?></span></h1>
-<h1 class="comment_title"><a href="#comments">
-<?php echo $commentHandler->getCommentCount() ?>
-</a></h1>
-</div>
+<div class="entry-header"><h1><?php echo $yellow->page->getHtml("titleContent") ?></h1></div>
+<div class="entry-meta"><?php echo htmlspecialchars($yellow->page->getDate("published")) ?> <?php echo $yellow->text->getHtml("blogBy") ?> <?php $authorCounter = 0; foreach(preg_split("/,\s*/", $yellow->page->get("author")) as $author) { if(++$authorCounter>1) echo ", "; echo "<a href=\"".$yellow->page->getPage("blog")->getLocation().$yellow->toolbox->normaliseArgs("author:$author")."\">".htmlspecialchars($author)."</a>"; } ?></div>
 <div class="entry-content"><?php echo $yellow->page->getContent() ?></div>
 <div class="entry-footer">
-	<?php if($yellow->page->isExisting("tag")): ?>
-		&nbsp;&nbsp;<i class="fa fa-tags"></i> <?php $tagCounter = 0; foreach(preg_split("/,\s*/", $yellow->page->get("tag")) as $tag) { if(++$tagCounter>1) echo ", "; echo "<a href=\"".$yellow->page->getParentTop()->getLocation().$yellow->toolbox->normaliseArgs("tag:$tag")."\">".htmlspecialchars($tag)."</a>"; } ?>
-	<?php endif ?>
+<?php if($yellow->page->isExisting("tag")): ?>
+<p><?php echo $yellow->text->getHtml("blogTag") ?> <?php $tagCounter = 0; foreach(preg_split("/,\s*/", $yellow->page->get("tag")) as $tag) { if(++$tagCounter>1) echo ", "; echo "<a href=\"".$yellow->page->getPage("blog")->getLocation().$yellow->toolbox->normaliseArgs("tag:$tag")."\">".htmlspecialchars($tag)."</a>"; } ?></p>
+<?php endif ?>
 </div>
-<div class="content seperate">
 </div>
 </div>
 
@@ -36,9 +31,9 @@
 <?php if($comment->isPublished() && !$commentHandler->isBlacklisted($comment)) { ?>
 <div class="comment <?php $i++; if($i&1) { echo 'odd';} else {echo 'even';} ?>">
 <a name="<?php echo $comment->getHtml("uid") ?>"></a>
+<div class="commenticon"><img src="<?php echo $commentHandler->getUserIcon($comment) ?>"/></div>
 <div class="commentname">
 <a href="<?php echo ($comment->getHtml("url")=="")?$yellow->page->getLocation():$comment->getHtml("url")?>"><?php echo $comment->getHtml("name") ?></a>:</div>
-<div class="commenticon"><img src="<?php echo $commentHandler->getUserIcon($comment) ?>"/></div>
 <div class="commentcontent"><?php echo $commentHandler->transformText($yellow->page, $comment->comment) ?></div>
 <div class="commentdate"><?php echo $this->yellow->text->normaliseDate($comment->get("created")) ?></div>
 </div>
@@ -72,3 +67,4 @@
 <?php endif ?>
 <?php endif ?>
 </div>
+
