@@ -87,13 +87,17 @@ class YellowComments
 	// Cleanup datastructures
 	function onParseContentRaw($page, $text)
 	{
-		return (lcfirst($page->get("parser"))=="comments")?$this->yellow->text->get("commentsWebinterfaceModify"):$text;
+		return (lcfirst($page->get("parser"))=="comments")?"":$text;
 	}
 
 	// Handle page meta data parsing
 	function onParseMeta($page)
 	{
-		if(lcfirst($page->get("parser"))=="comments") $page->visible = false;
+		if(lcfirst($page->get("parser"))=="comments")
+		{
+			$page->visible = false;
+			$page->available = false;
+		}
 	}
 
 	// Load blacklist from file
@@ -138,6 +142,12 @@ class YellowComments
 		} else {
 			return $this->yellow->config->get("commentsDir").$page->get("pageFile");
 		}
+	}
+
+	// Return comment edit location for current page
+	function getEditLocation($page)
+	{
+		return ($this->yellow->config->get("commentsDir")=="")?$page.$this->yellow->config->get("commentsExtension"):"#";
 	}
 	
 	// Load comments from given file name

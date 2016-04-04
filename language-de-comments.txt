@@ -11,3 +11,4 @@ CommentsStatusInvalidUrl: Die eingegebene URL ist nicht erlaubt.
 CommentsStatusInvalidMail: Die E-Mail-Adresse ist nicht gültig. Bitte überprüfe die Eingabe.
 CommentsManual: Der Kommentar wird moderiert und manuell veröffentlicht. Dies kann ein oder zwei Tage dauern.
 CommentsWebinterfaceModify: Klicke auf "Edit Page" um die Kommentare zu ändern.
+CommentsModify: Kommentare ändern

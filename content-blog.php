@@ -4,6 +4,7 @@
 <?php $commentHandler->processSend() ?>
 <?php $commentHandler->unlockComments() ?>
 <div class="content main">
+<?php if(lcfirst($yellow->page->get("parser"))!="comments"): ?>
 <?php $yellow->page->set("entryClass", "entry") ?>
 <?php if($yellow->page->isExisting("tag")): ?>
 <?php foreach(preg_split("/,\s*/", $yellow->page->get("tag")) as $tag) { $yellow->page->set("entryClass", $yellow->page->get("entryClass")." ".$yellow->toolbox->normaliseArgs($tag, false)); } ?>
@@ -64,6 +65,15 @@
 </p>
 <?php else: ?>
 <p class="comments_status"><?php echo $yellow->page->getHtml("commentsStatus") ?><p>
+<?php endif ?>
+<?php endif ?>
+
+<?php endif ?>
+<?php if($commentHandler->isWebinterface($yellow->page)): ?>
+<?php if(lcfirst($yellow->page->get("parser"))=="comments"): ?>
+<?php echo $yellow->text->get("commentsWebinterfaceModify"); ?>
+<?php else: ?>
+<a href="<?php echo htmlspecialchars($commentHandler->getEditLocation($yellow->page->getUrl())) ?>"><?php echo $yellow->text->getHtml("commentsModify") ?></a>
 <?php endif ?>
 <?php endif ?>
 </div>
