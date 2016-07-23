@@ -1,0 +1,14 @@
+Language: fr
+# Additional texts for comment plugin
+ContactUrl: Site internet:
+CommentsComments: Commentaires:
+CommentsStatusNone: Envie de discuter? Laissez un commentaire.
+CommentsStatusDone: Merci pour votre participation.
+CommentsStatusError: Une erreur s'est produite. Merci de réessayer plus tard.
+CommentsStatusInvalidComment: Votre commentaire contient des caractères invalides. Merci d'utiliser seulement des caractères lisibles par des humains.
+CommentsStatusInvalidName: Votre nom est vide ou alors il contient des caractères invalides.
+CommentsStatusInvalidUrl: L'URL que vous avez tapée n'est pas autorisée.
+CommentsStatusInvalidMail: La vérification de votre adresse courriel a échouée. Merci de vérifier que vous l'avez saisie correctement.
+CommentsManual: Ces commentaires sont modérés et publiés manuellement: cela peut prendre un jour ou deux.
+CommentsWebinterfaceModify: Merci de modifier votre commentaire en cliquant sur «Edit page».
+CommentsModify: Modifier les commentaires
