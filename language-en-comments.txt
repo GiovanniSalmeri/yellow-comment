@@ -4,11 +4,11 @@ ContactUrl: Webpage:
 CommentsComments: Comments:
 CommentsStatusNone: Interested to discuss? Leave a comment.
 CommentsStatusDone: Thanks for your feedback.
-CommentsStatusError: An error occured. Please try again later.
+CommentsStatusError: An error occurred. Please try again later.
 CommentsStatusInvalidComment: Your comment contains invalid characters. Please use human readable characters only.
 CommentsStatusInvalidName: Your name contains invalid characters or is empty.
 CommentsStatusInvalidUrl: The Url you have entered is not allowed.
-CommentsStatusInvalidMail: Verfication of your mail address has been failed. Please check your input.
+CommentsStatusInvalidMail: Verification of your mail address has been failed. Please check your input.
 CommentsManual: These comments are moderated and published manually. This may take a day or two.
 CommentsWebinterfaceModify: Please modify the comments by clicking on "Edit Page".
 CommentsModify: Modify comments
