@@ -79,7 +79,7 @@ class YellowComments
 	// Check if the web interface is active
 	function isWebinterface($page)
 	{
-		$location = $page->getLocation();
+		$location = $page->getLocation(true);
 		$webinterface = $this->yellow->plugins->get("webinterface");
 		return $webinterface?$webinterface->checkRequest($location):false;
 	}
