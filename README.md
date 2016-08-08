@@ -11,11 +11,12 @@ This plugin uses stuff from the [yellow](https://github.com/datenstrom/yellow) f
 
 ## Installation
 
-1. Copy `content-blogpages.php` and `content-blog.php` into your `system/themes/snippets` directory.
-2. Copy `comments.php` and language files into your `system/plugins` directory.
-3. Make sure your `content` folder is writable. (It probably already is.)
-4. Setup `commentsEmail` in the settings.
-5. Check and tweak the settings until everything is as you need.  :)
+1. [Download and install Yellow](https://github.com/datenstrom/yellow/).
+2. Delete `content-blogpages.php` and `content-blog.php` in your `system/themes/snippets` directory.
+3. [Download plugin](https://github.com/nasendackel/yellow-comments/archive/master.zip) to the `system/plugins` folder.
+4. Make sure your `content` folder is writable. (It probably already is.)
+5. Add `commentsEmail` to your settings file `system/config/config.ini`.
+6. Check and tweak the settings until everything is as you need.  :)
 
 ## Configuration/Settings
 
