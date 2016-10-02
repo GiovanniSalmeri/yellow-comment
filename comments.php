@@ -43,7 +43,7 @@ class YellowComment
 
 class YellowComments
 {
-	const Version = "0.1";
+	const Version = "0.1.1";
 	var $yellow;			//access to API
 	var $requiredField;
 	var $comments;
@@ -409,7 +409,7 @@ class YellowComments
 					$urls[$n] = $this->yellow->plugins->get("emojiawesome")->normaliseText($urls[$n], true, true);
 				}
 			} else {
-				$urls[$n] = "<a href=\"".$urls[n]."\">".$urls[$n]."</a>";
+				$urls[$n] = "<a href=\"".$urls[$n]."\">".$urls[$n]."</a>";
 			}
 		}
 		$text = preg_replace("/\n/", "<br/>", implode($urls));
