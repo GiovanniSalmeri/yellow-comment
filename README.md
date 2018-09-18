@@ -1,92 +1,78 @@
 # YellowComments
 
-```
-"Just an idea of a comment-system for yellow. 
- Feel free to transfrom it in something good!" 
-
- Nasendackel/2016
-```
-
-This plugin uses stuff from the [yellow](https://github.com/datenstrom/yellow) flat-file cms system.
+Easy commenting system.
 
 ## Installation
 
 1. [Download and install Yellow](https://github.com/datenstrom/yellow/).
-2. Delete `content-blogpages.php` and `content-blog.php` in your `system/themes/snippets` directory.
-3. [Download plugin](https://github.com/nasendackel/yellow-comments/archive/master.zip) to the `system/plugins` folder.
-4. Make sure your `content` folder is writable. (It probably already is.)
-5. Add `commentsEmail` to your settings file `system/config/config.ini`.
-6. Check and tweak the settings until everything is as you need.  :)
+2. [Download plugin](https://github.com/nasendackel/yellow-comments/archive/master.zip). If you are using Safari, right click and select 'Download file as'.
+3. Copy `comments.zip` into your system/plugins folder.
 
-## Configuration/Settings
+To uninstall delete the [plugin files](update.ini).
 
-The plugin is using the settings system of Yellow with `system/config/config.ini`. This is where you can change or add settings. 
+## How to use Comments
 
-A short overview over the settings so far:
+The plugin adds a comments section on blog pages.
 
-* `commentsEmail`
+To add comments on other pages create a [comments] shortcut. The following optional argument is available:
 
-  This setting has to be set at the moment. All comments entered are mailed to this address.
+`opening` = overrides `commentsOpening` setting (see below); only the values `0` and `-1` work unless the metadata of the page contains a setting `published`
 
-* `commentsDir` (default: `` (empty))
+## How to configure Comments
 
-  The location where your comment files are stored, if empty the files are stored within the content directory by using the `commentsExtension` setting.
+The following settings can be configured in file `system/config/config.ini`: 
 
-* `commentsExtension` (default: `-comments`)  
+`commentsModerator` (default: ` ` (empty)) = email address of moderator. If not present, main `email` address of site is used; this value can be overridden with a setting `Moderator` in the page.  
+`commentsDir` (default:  `comments/`) = the location where your comment files are stored
+`commentsAutoPublish` (default:  `0`) = if set to `1` any comment is published immediately and the moderator can later remove it; if set to `0` no comment is published unless the moderator approves it (except particular cases, this latter behaviour is much more desirable)
+`commentsMaxSize` (default:  `10000`) = maximum size of a comment
+`commentsTimeout` (default:  `0`) = number of days after which a comment is permanently deleted if not approved for publication; if set to `0` comments are never automatically deleted
+`commentsOpening` (default:  `30`) = number of days from publication after which comments are closed; if set to `0` comments are never closed, if set to `-1` all comments are closed regardless of publication date (can be used as a maintenance mode while manually editing the comments file); this value can be overridden with an optional argument when using the shortcut `[comments]`
+`commentsAuthorNotification` (default:  `1`) = if set to `1`, authors are notified with an email of the publication of their comments (useful also as a check on the authenticity of the email entered)
+`commentsSpamFilter` (default:  `href=|url=`) = spam filter as regular expression
+`commentsIconSize` (default:  `80`) = size in pixel of the icon
+`commentsIconGravatar` (default:  `1`) = use [Gravatar](https://en.gravatar.com/) images instead of the internal image creator; when set to `1` also the Name field is syncronously filled in, if available in the Gravatar profile
+`commentsIconGravatarDefault` (default:  `mp`) = default image for Gravatar (see the [documentation](https://en.gravatar.com/site/implement/images/) for possible values); without effect if `commentsIconGravatar` is set `0`
 
-  If your comments are stored within the content files, it's needed to distinguish between normal content and comments. If a comment is stored the base file path is needed and extended with the extension given. For example `test.txt` would become `test-comments.txt`.
+## Example
 
-* `commentsTemplate` (default: `system/config/comments-template.txt`)  
+Embedding comments in a non-blog page:
 
-  When a new comment file is created, one could set a default content for the head of the file. Maybe we can display it later. At the moment it's used to hide the comments from the page visitor and for better webinterface integration.
+```
+[comments]
+[comments 0]
+```
 
-* `commentsSeparator` (default: `----`)
+## Updating from a previous version
 
-  When having multiple comments, the separator is used to split the comment file into separate comments.
+If you were using a previous version of this plugin, you can update the comments to the new format with a simple script:
 
-* `commentsAutoAppend` (default: `0`)
+```
+<?php
+$extension = "-comments";
+$separator = "----";
+$dir = "comments/";
+$trash = "trash/";
 
-  If this flag is set to `1`, entered comments are automatically added to the comment file. No need to do it by yourself.
+@mkdir($dir);
+@mkdir($trash);
+$files = glob("*.*");
+$count = 0;
+foreach ($files as $file) {
+	if (preg_match("/^(.*)" . $extension . "(\.\w+)$/", $file, $parts)) {
+		$text = str_replace("\r\n", "\n", file_get_contents($file));
+		$text = preg_replace("/^". $separator . "$/m", "", $text);
+		$new = fopen($dir . $parts[1] . $parts[2], "w") or die("Cannot create new file\n");
+		fwrite($new, $text) or die("Cannot write in new file\n");
+		fclose($new);
+		rename($file, $trash . $file)  or die("Cannot trash old file\n");
+		$count++;
+	}
+}
+echo "$count files updated\n";
+```
 
-* `commentsAutoPublish` (default: `0`)
+Put it in the blog directory with the name `update.php`, change the first four variables if necessary, and execute with `php update.php`. If you cannot easily execute the script remotely, you can for example download all blog files, execute locally the script and then upload again. The trash directory can be deleted if all has gone right.
 
-  If a comment is added automatically, you may wish the comment is published immediately. If you set this to `1` you have to remove new comments instead of adding them.
-
-* `commentsMaxSize` (default: `10000`)
-
-  In case someone tries to overflow your webspace you can limit the comment files to the needed maximum size.
-
-* `commentsSpamFilter` (default: `href=|url=`)
-
-  The message/comment input field is checked against this filter, to ensure no unwanted content is within this message.
-
-* `commentsTimeout` (default: `7`)
-
-  If a comment isn't published it will be deleted several days after its creation.
-
-* `commentsIconBackgroundColor` (default: `ffffff`)
-
-  [RGB hex value](http://www.colorspire.com/rgb-color-wheel/) of the avatar/icons background in front of the comments.
-
-* `commentsIconForegroundColors` (default: `ff0000,cf0000,00ff00,00cf00,0000ff,0000cf,ffcf000,cfff00,00ffcf,00cfff,cf00ff,ff00cf`)
-
-  [RGB hex value](http://www.colorspire.com/rgb-color-wheel/) of the avatar/icons foreground in front of the comments. The images are individual to every mail/username combination.
-
-* `commentsIconSize` (default: `2`)
-
-  Scaling factor of such an image. Usally not needed, but if artefacts are displayed you should increase this value. NOTE: This works only if `commentsIconGravatar` is `0`.
-
-* `commentsIconGravatar` (default: `0`)
-
-  Use [Gravatar](https://en.gravatar.com/) images instead of the internal image creator.
-
-* `commentsIconGravatarOptions` (default: `s=80&d=mm&r=g`)
-
-  Set the [Gravatar](https://en.gravatar.com/) image options. Please consult the service website.
-
-* `commentsBlacklist` (default: `system/config/comments-blacklist.ini`)
-
-  A file which contains all mail addresses to blacklist. Comments with these addresses are not shown in the output any longer.
-
-
+## Developer
 

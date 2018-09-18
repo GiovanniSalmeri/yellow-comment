@@ -1,14 +1,20 @@
 Language: de
 # Additional texts for comment plugin
-ContactUrl: Webseite:
 CommentsComments: Kommentar:
-CommentsStatusNone: Interesse an einer Diskussion? Schreibe einen Kommentar.
+CommentsStatusNone: Interesse an einer Diskussion? Schreiben Sie einen Kommentar.
+CommentsStatusClosed: Kommentare sind geschlossen.
 CommentsStatusDone: Danke für die Rückmeldung.
-CommentsStatusError: Ein Fehler ist aufgetreten. Versuche es später.
-CommentsStatusInvalidComment: Dein Kommentar enthält ungültige Zeichen. Bitte verwende nur für Menschen lesbare Zeichen.
-CommentsStatusInvalidName: Dein Kommentar enthält ungültige Zeichen oder ist leer.
-CommentsStatusInvalidUrl: Die eingegebene URL ist nicht erlaubt.
-CommentsStatusInvalidMail: Die E-Mail-Adresse ist nicht gültig. Bitte überprüfe die Eingabe.
-CommentsManual: Der Kommentar wird moderiert und manuell veröffentlicht. Dies kann ein oder zwei Tage dauern.
-CommentsWebinterfaceModify: Klicke auf "Edit Page" um die Kommentare zu ändern.
-CommentsModify: Kommentare ändern
+CommentsPrivacy: Die E-Mail-Adresse wird nicht veröffentlicht noch an Dritte weitergegeben.
+CommentsGravatar: Benutzen Sie <a href="https://de.gravatar.com">Gravatar</a>, wenn Sie ein Bild neben ihrem Namen möchten.
+CommentsMarkdown: In Ihrem Text können Sie <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">Markdown</a> zur Kennzeichnung von <code>*Kursivschrift*</code>, Links <code>&lt;http://example.org&gt;</code> und anderen Elementen verwenden.
+CommentsManual: Der Kommentar wird moderiert und manuell so bald wie möglich veröffentlicht.
+CommentsPublished: Ihr Kommentar wurde veröffentlicht. Danke schön!
+CommentsHoneypot: Dieses Feld bitte leer lassen:
+CommentsName: Name:
+CommentsEmail: E-Mail:
+CommentsMessage: Nachricht:
+CommentsConsent: Ich stimme zu, dass diese Webseite meine Nachricht speichert.
+CommentsButton: Nachricht absenden
+CommentsStatusIncomplete: Bitte alle Felder ausfüllen.
+CommentsStatusInvalid: Bitte eine gültige E-Mail angeben.
+CommentsStatusError: Nachricht konnte nicht versandt werden, versuchen Sie es später erneut.

@@ -1,14 +1,20 @@
 Language: fr
 # Additional texts for comment plugin
-ContactUrl: Site internet:
 CommentsComments: Commentaires:
 CommentsStatusNone: Envie de discuter? Laissez un commentaire.
-CommentsStatusDone: Merci pour votre participation.
-CommentsStatusError: Une erreur s'est produite. Merci de réessayer plus tard.
-CommentsStatusInvalidComment: Votre commentaire contient des caractères invalides. Merci d'utiliser seulement des caractères lisibles par des humains.
-CommentsStatusInvalidName: Votre nom est vide ou alors il contient des caractères invalides.
-CommentsStatusInvalidUrl: L'URL que vous avez tapée n'est pas autorisée.
-CommentsStatusInvalidMail: La vérification de votre adresse courriel a échouée. Merci de vérifier que vous l'avez saisie correctement.
-CommentsManual: Ces commentaires sont modérés et publiés manuellement: cela peut prendre un jour ou deux.
-CommentsWebinterfaceModify: Merci de modifier votre commentaire en cliquant sur «Edit page».
-CommentsModify: Modifier les commentaires
+CommentsStatusClosed: Les commentaires sont fermés.
+CommentsStatusDone: Merci de votre participation.
+CommentsPrivacy: L'adresse email ne sera pas publiée ni partagée avec autrui.
+CommentsGravatar: Si vous voulez une photo à côté de votre nom, utilisez le service <a href="https://fr.gravatar.com">Gravatar</a>.
+CommentsMarkdown: Dans votre texte vous pouvez utiliser <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">markdown</a> pour marquer l'<code>*italique*</code>, les liens <code>&lt;http://example.org&gt;</code> et d'autres éléments.
+CommentsManual: Les commentaires sont modérés et publiés manuellement dès que possible.
+CommentsPublished: Votre commentaire a été publié. Merci de votre participation!
+CommentsHoneypot: Laissez ce champ vide, s'il vous plaît:
+CommentsName: Nom:
+CommentsEmail: Email:
+CommentsMessage: Message:
+CommentsConsent: Je consens à que ce site stocke mon message.
+CommentsButton: Envoyer le message
+CommentsStatusIncomplete: S'il vous plaît, veuillez remplir tous les champs.
+CommentsStatusInvalid: S'il vous plaît, veuillez entrer une adresse email valide.
+CommentsStatusError: Votre message n'a pas pu être envoyé, réessayez plus tard s'il vous plaît.
