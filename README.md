@@ -1,6 +1,6 @@
 # YellowComments
 
-Easy commenting system. Easy for the administrator (zero configuration), easy for users (one click for sending a comment), easy for the moderator (one click for approving comments), easy for environment (no byte wasted, no computer harmed). Hard for spammers (spam filter, moderation, easypot captcha, automatic closing of comments).
+Easy commenting system. Easy for the administrator (zero configuration), easy for users (one click for sending a comment), easy for the moderator (one click for approving comments), easy for environment (no byte wasted, no computer harmed). Hard for spammers (spam filter, moderation, honeypot captcha, automatic closing of comments).
 
 <p align="center"><img src="comments-screenshot.png?raw=true" alt="Screenshot"></p>
 
