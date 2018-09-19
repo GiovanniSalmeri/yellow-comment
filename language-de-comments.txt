@@ -1,14 +1,14 @@
 Language: de
 # Additional texts for comment plugin
-CommentsComments: Kommentar:
-CommentsStatusNone: Interesse an einer Diskussion? Schreiben Sie einen Kommentar.
+CommentsComments: Kommentare:
+CommentsStatusNone: Interesse an einer Diskussion? Schreibe einen Kommentar.
 CommentsStatusClosed: Kommentare sind geschlossen.
 CommentsStatusDone: Danke für die Rückmeldung.
 CommentsPrivacy: Die E-Mail-Adresse wird nicht veröffentlicht noch an Dritte weitergegeben.
-CommentsGravatar: Benutzen Sie <a href="https://de.gravatar.com">Gravatar</a>, wenn Sie ein Bild neben ihrem Namen möchten.
-CommentsMarkdown: In Ihrem Text können Sie <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">Markdown</a> zur Kennzeichnung von <code>*Kursivschrift*</code>, Links <code>&lt;http://example.org&gt;</code> und anderen Elementen verwenden.
-CommentsManual: Der Kommentar wird moderiert und manuell so bald wie möglich veröffentlicht.
-CommentsPublished: Ihr Kommentar wurde veröffentlicht. Danke schön!
+CommentsGravatar: Benutze <a href="https://de.gravatar.com">Gravatar</a>, wenn ein Bild neben deinem Namen erscheinen soll.
+CommentsMarkdown: In deinem Text kannst du <a href="https://developers.datenstrom.se/de/help/markdown-cheat-sheet">Markdown</a> zur Kennzeichnung von <code>*Kursivschrift*</code>, Links <code>&lt;http://example.org&gt;</code> und anderen Elementen verwenden.
+CommentsManual: Der Kommentar wird moderiert und so bald wie möglich freigeschaltet.
+CommentsPublished: Dein Kommentar wurde veröffentlicht. Danke schön!
 CommentsHoneypot: Dieses Feld bitte leer lassen:
 CommentsName: Name:
 CommentsEmail: E-Mail:
@@ -17,4 +17,4 @@ CommentsConsent: Ich stimme zu, dass diese Webseite meine Nachricht speichert.
 CommentsButton: Nachricht absenden
 CommentsStatusIncomplete: Bitte alle Felder ausfüllen.
 CommentsStatusInvalid: Bitte eine gültige E-Mail angeben.
-CommentsStatusError: Nachricht konnte nicht versandt werden, versuchen Sie es später erneut.
+CommentsStatusError: Nachricht konnte nicht versandt werden, versuche es später erneut.
