@@ -33,7 +33,7 @@ The following settings can be configured in file `system/config/config.ini`. You
 * `commentsAuthorNotification` (default:  `1`) = if set to `1`, authors are notified with an email of the publication of their comments (useful also as a check on the authenticity of the email entered)
 * `commentsSpamFilter` (default:  `href=|url=`) = spam filter as regular expression
 * `commentsIconSize` (default:  `80`) = size in pixel of the icon
-* `commentsIconGravatar` (default:  `1`) = use [Gravatar](https://en.gravatar.com/) images instead of the internal image creator; when set to `1` also the Name field is syncronously filled in, if available in the Gravatar profile
+* `commentsIconGravatar` (default:  `0`) = use [Gravatar](https://en.gravatar.com/) images instead of the internal image creator; when set to `1` also the Name field is syncronously filled in, if available in the Gravatar profile
 * `commentsIconGravatarDefault` (default:  `mp`) = default image for Gravatar (see the [documentation](https://en.gravatar.com/site/implement/images/) for possible values); without effect if `commentsIconGravatar` is `0`
 
 ## Example

@@ -49,7 +49,7 @@ class YellowComments {
         $this->yellow->config->setDefault("commentsAuthorNotification", "1");
         $this->yellow->config->setDefault("commentsSpamFilter", "href=|url=");
         $this->yellow->config->setDefault("commentsIconSize", "80");
-        $this->yellow->config->setDefault("commentsIconGravatar", "1");
+        $this->yellow->config->setDefault("commentsIconGravatar", "0");
         $this->yellow->config->setDefault("commentsIconGravatarDefault", "mp");
     }
 
