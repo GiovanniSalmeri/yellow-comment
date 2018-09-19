@@ -134,7 +134,7 @@ class YellowComments {
 
     // Return Email
     function getEmail() {
-        return $this->yellow->page->get("moderator") ? $this->yellow->page->get("moderator") : ($this->yellow->config->isExisting("commentsModerator") ? $this->yellow->config->get("commentsModerator") : $this->yellow->config->get("author"));
+        return $this->yellow->page->get("moderator") ? $this->yellow->page->get("moderator") : ($this->yellow->config->isExisting("commentsModerator") ? $this->yellow->config->get("commentsModerator") : $this->yellow->config->get("email"));
     }
 
     // Return file name from page object
