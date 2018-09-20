@@ -171,18 +171,16 @@ class YellowComments {
         $length = ftell($this->fileHandle);
         fseek($this->fileHandle, 0, SEEK_SET);
         $contents = explode("\n\n---\n", str_replace("\r\n", "\n", $length>0 ? fread($this->fileHandle, $length) : ""));
-//        more robust (doesn't need \n\n before ---), but slower; it requires...
-//        preg_match_all("/---\n.+?---\n.((?!---\n).)*/s", ($length>0) ? fread($this->fileHandle, $length) : "", $temp);
-//        $contents = $temp[0];
+//        more robust (doesn't need \n\n before ---), but slower
+//        preg_match_all("/---\n(.+?---\n((?!---\n).)*)/s", ($length>0) ? fread($this->fileHandle, $length) : "", $temp);
+//        $contents = $temp[1];
         $pageText = array_shift($contents);
         foreach ($contents as $content) {
             if (preg_match("/^(.+?)\n+---\n+(.*)/s", $content, $parts)) {
-//            ... a different regex
-//            if (preg_match("/^---\n(.+?)\n+---\n+(.*)/s", $content, $parts)) {
                 $comment = new YellowComment;
                 foreach (preg_split("/\n+/", $parts[1]) as $line) {
                     preg_match("/^\s*(.*?)\s*:\s*(.*?)\s*$/", $line, $matches);
-                    if (!empty($matches[1]) && !strempty($matches[2])) {
+                    if (!empty($matches[1]) && !empty($matches[2])) {
                         $comment->set(lcfirst($matches[1]), $matches[2]);
                         if (lcfirst($matches[1]) == "created") $this->yellow->page->setLastModified(strtotime($matches[2]));
                     }
