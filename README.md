@@ -1,6 +1,6 @@
-# YellowComments
+# Comments 0.8.2
 
-Easy commenting system. Easy for the administrator (zero configuration), easy for users (one click for sending a comment), easy for the moderator (one click for approving comments), easy for environment (no byte wasted, no computer harmed). Hard for spammers (spam filter, moderation, honeypot captcha, automatic closing of comments).
+Simple commenting system.
 
 <p align="center"><img src="comments-screenshot.png?raw=true" alt="Screenshot"></p>
 
@@ -18,11 +18,19 @@ The extension adds automatically a comments section on blog pages.\*
 
 To add comments on other pages (that is, non-blog pages) create a [comments] shortcut at the end of each page in which you want a comments section. In this case the following optional argument is available:
 
-`opening` = number of days from publication after which comments are closed; this argument, if present, overrides `commentsOpening` setting (in other words: this value is used and `commentsOpening` is ignored). See below for details and for the meaning of the special values `0` and `-1`.
+`opening` = number of days from publication after which comments are closed; this argument, if present, overrides the `commentsOpening` setting (in other words: this value is used and `commentsOpening` is ignored). See below for details and for the meaning of the special values `0` and `-1`.
 
 To add comments on every page of the site, add `<?php echo $this->yellow->page->getExtra("comments") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContent() ?>`.
 
 \* Please remark that in the sample pages of the Blog extension comments are normally closed because of the publication date of the pages!
+
+Once installed, this Comments extension is particularly easy to use:
+
++ easy for the administrator (zero configuration: all default values are sensible)
++ easy for users (one click for sending a comment, without registration)
++ easy for the moderator (one click in the received email for approving comments)
+
+In spite of that the extension is hard for spammers (spam filter, moderation, honeypot captcha, automatic closing of comments).
 
 ## How to configure Comments
 
@@ -82,4 +90,4 @@ Put it in the blog directory with the name `update.php`, change the first four v
 
 ## Developers
 
-Previous mantainers nasendackel, wunderfeyd; current mantainer Giovanni Salmeri
+Previous maintainers nasendackel, wunderfeyd; current maintainer Giovanni Salmeri

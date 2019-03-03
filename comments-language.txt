@@ -1,0 +1,81 @@
+# Datenstrom Yellow language
+
+Language: en
+CommentsComments: Comments:
+CommentsStatusNone: Interested to discuss? Leave a comment.
+CommentsStatusClosed: Comments are closed.
+CommentsStatusDone: Thanks for your feedback.
+CommentsPrivacy: Your email will not be published nor shared with anyone.
+CommentsGravatar: Please use the service <a href="https://en.gravatar.com">Gravatar</a> if you would like a photo beside your name.
+CommentsMarkdown: In your text you can use <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">markdown</a> for marking up <code>*italic*</code>, links <code>&lt;http://example.org&gt;</code> and other elements.
+CommentsManual: These comments are moderated and published manually as soon as possible.
+CommentsPublished: Your comment has been published. Thank you very much!
+CommentsHoneypot: Please leave this field blank:
+CommentsName: Name:
+CommentsEmail: Email:
+CommentsMessage: Message:
+CommentsConsent: I consent that this website stores my message.
+CommentsButton: Send message
+CommentsStatusIncomplete: Please fill out all fields.
+CommentsStatusInvalid: Please enter a valid email.
+CommentsStatusError: Your comment could not be sent, please try again later.
+
+Language: de
+CommentsComments: Kommentare:
+CommentsStatusNone: Interesse an einer Diskussion? Schreibe einen Kommentar.
+CommentsStatusClosed: Kommentare sind geschlossen.
+CommentsStatusDone: Danke für die Rückmeldung.
+CommentsPrivacy: Die E-Mail-Adresse wird nicht veröffentlicht noch an Dritte weitergegeben.
+CommentsGravatar: Benutze <a href="https://de.gravatar.com">Gravatar</a>, wenn ein Bild neben deinem Namen erscheinen soll.
+CommentsMarkdown: In deinem Text kannst du <a href="https://developers.datenstrom.se/de/help/markdown-cheat-sheet">Markdown</a> zur Kennzeichnung von <code>*Kursivschrift*</code>, Links <code>&lt;http://example.org&gt;</code> und anderen Elementen verwenden.
+CommentsManual: Der Kommentar wird moderiert und so bald wie möglich freigeschaltet.
+CommentsPublished: Dein Kommentar wurde veröffentlicht. Danke schön!
+CommentsHoneypot: Dieses Feld bitte leer lassen:
+CommentsName: Name:
+CommentsEmail: E-Mail:
+CommentsMessage: Nachricht:
+CommentsConsent: Ich stimme zu, dass diese Webseite meine Nachricht speichert.
+CommentsButton: Nachricht absenden
+CommentsStatusIncomplete: Bitte alle Felder ausfüllen.
+CommentsStatusInvalid: Bitte eine gültige E-Mail angeben.
+CommentsStatusError: Nachricht konnte nicht versandt werden, versuche es später erneut.
+
+Language: fr
+CommentsComments: Commentaires:
+CommentsStatusNone: Envie de discuter? Laissez un commentaire.
+CommentsStatusClosed: Les commentaires sont fermés.
+CommentsStatusDone: Merci de votre participation.
+CommentsPrivacy: L’adresse email ne sera pas publiée ni partagée avec autrui.
+CommentsGravatar: Si vous voulez une photo à côté de votre nom, utilisez le service <a href="https://fr.gravatar.com">Gravatar</a>.
+CommentsMarkdown: Dans votre texte vous pouvez utiliser <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">markdown</a> pour ajouter du formatage tel que l’<code>*italique*</code>, les liens <code>&lt;http://example.org&gt;</code> et d’autres éléments.
+CommentsManual: Les commentaires sont modérés et publiés manuellement dès que possible.
+CommentsPublished: Votre commentaire a été publié. Merci de votre participation!
+CommentsHoneypot: Laissez ce champ vide, s’il vous plaît:
+CommentsName: Nom:
+CommentsEmail: Email:
+CommentsMessage: Message:
+CommentsConsent: Je consens à ce que ce site stocke mon message.
+CommentsButton: Envoyer le message
+CommentsStatusIncomplete: S’il vous plaît, veuillez remplir tous les champs.
+CommentsStatusInvalid: S’il vous plaît, veuillez entrer une adresse email valide.
+CommentsStatusError: Votre message n’a pas pu être envoyé, réessayez plus tard s’il vous plaît.
+
+Language: it
+CommentsComments: Commenti:
+CommentsStatusNone: Volete contribuire alla discussione? Lasciate un commento.
+CommentsStatusClosed: I commenti sono chiusi.
+CommentsStatusDone: Grazie per il vostro contributo.
+CommentsPrivacy: Il vostro indirizzo di posta elettronica non sarà né pubblicato né ceduto a terzi.
+CommentsGravatar: Usate il servizio <a href="https://en.gravatar.com">Gravatar</a> se volete che sia mostrata una foto accanto al vostro nome.
+CommentsMarkdown: Nel vostro testo potete usare <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">markdown</a> per marcare il <code>*corsivo*</code>, i collegamenti <code>&lt;http://example.org&gt;</code> e altri elementi.
+CommentsManual: I commenti sono moderati e pubblicati manualmente appena possibile.
+CommentsPublished: Il vostro commento è stato pubblicato. Grazie per il vostro contributo!
+CommentsHoneypot: Lasciate questo campo vuoto:
+CommentsName: Nome:
+CommentsEmail: Posta elettronica:
+CommentsMessage: Messaggio:
+CommentsConsent: Acconsento alla registrazione del mio messaggio in questo sito.
+CommentsButton: Inviare il messaggio
+CommentsStatusIncomplete: Per favore compilate tutti i campi.
+CommentsStatusInvalid: Per favore indicate un indirizzo di posta elettronica valido.
+CommentsStatusError: C’è stato un problema nell’invio del messaggio: per favore riprovate più tardi.

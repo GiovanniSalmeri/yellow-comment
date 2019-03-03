@@ -4,6 +4,7 @@
 
 + Updated to the new API
 + Documentation clarified
++ Language files merged and renamed
 
 
 # Changelog 0.7.6
