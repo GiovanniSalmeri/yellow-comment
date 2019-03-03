@@ -1,3 +1,11 @@
+# Changelog 0.8.2
+
+## General
+
++ Updated to the new API
++ Documentation clarified
+
+
 # Changelog 0.7.6
 
 ## General
