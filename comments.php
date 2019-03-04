@@ -366,7 +366,7 @@ class YellowComments {
 //        Simpler, but allows shortcodes
 //        if ($this->yellow->extensions->isExisting($this->yellow->system->get("parser"))) {
 //            $markdownHandler = $this->yellow->extensions->get($this->yellow->system->get("parser"));
-//            $page->parserSafeMode = true; // always disallow HTML in comments
+//            $page->safeMode = true; // always disallow HTML in comments
 //            $text = $markdownHandler->onParseContentRaw($page, $text);
 //        }
         $text = preg_replace('/<h\d>(.*)<\/h\d>/', '<p><strong>$1</strong></p>', $text); // no headers, please
