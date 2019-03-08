@@ -65,6 +65,10 @@ class YellowComments {
             $this->lockComments($this->yellow->page, false);
             $this->loadComments();
             $this->processSend();
+            if ($this->yellow->page->get("status") == "done") { // post/redirect/get
+                setcookie("status", "done");
+                $this->yellow->page->clean(303, $this->yellow->page->getLocation(true));
+            }
             $this->unlockComments();
             $iconSize = intval($this->yellow->system->get("commentsIconSize")); 
 
@@ -84,6 +88,13 @@ class YellowComments {
             }
             $output .= "</div>\n";
 
+//            if ($this->yellow->page->get("status") == "done") {  // works only in FIrefox e Chrome
+//                $output .= "<script type=\"text/javascript\">window.addEventListener('load', function() { history.replaceState({}, null, location.href); })</script>\n";
+//            }
+            if ($_COOKIE["status"] == "done") {
+                setcookie("status", "", 1);
+                $this->yellow->page->set("status", "done");
+            }
             $output .= "<div class=\"content separate\" id=\"form\"></div>\n";
             if ($this->yellow->page->get("status") != "done" && $this->areOpen) {
                 $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->text->getHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
@@ -294,6 +305,10 @@ class YellowComments {
                 $status = $this->saveComments(true);
             }
             if ($status == "send" && $this->getEmail()) $status = $this->sendEmail($comment);
+//            if ($status == "done") { // post/redirect/get
+//                setcookie("status", "done");
+//                $this->yellow->page->clean(303, $this->yellow->page->getLocation(true));
+//            }
             $this->yellow->page->setHeader("Last-Modified", $this->yellow->toolbox->getHttpDateFormatted(time()));
             $this->yellow->page->setHeader("Cache-Control", "no-cache, must-revalidate");
         } else {
