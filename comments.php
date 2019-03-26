@@ -29,7 +29,7 @@ class YellowComment {
 }
 
 class YellowComments {
-    const VERSION = "0.8.2";
+    const VERSION = "0.8.3";
     const TYPE = "feature";
     public $yellow;         //access to API
 
