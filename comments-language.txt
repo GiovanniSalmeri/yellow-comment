@@ -66,7 +66,7 @@ CommentsStatusNone: Vuoi contribuire alla discussione? Lascia un commento!
 CommentsStatusClosed: I commenti sono chiusi.
 CommentsStatusDone: Grazie per il contributo!
 CommentsPrivacy: Il tuo indirizzo di posta elettronica non sarà né pubblicato né ceduto a terzi.
-CommentsGravatar: Usa il servizio <a href="https://en.gravatar.com">Gravatar</a> se vuoi che sia mostrata una foto accanto al tuo nome.
+CommentsGravatar: Usa il servizio <a href="https://it.gravatar.com">Gravatar</a> se vuoi che sia mostrata una foto accanto al tuo nome.
 CommentsMarkdown: Nel testo puoi usare <a href="https://developers.datenstrom.se/help/markdown-cheat-sheet">markdown</a> per marcare il <code>*corsivo*</code>, i collegamenti <code>&lt;http://example.org&gt;</code> e altri elementi.
 CommentsManual: I commenti sono moderati e pubblicati manualmente appena possibile.
 CommentsPublished: Il tuo commento è stato pubblicato. Grazie per il contributo!
