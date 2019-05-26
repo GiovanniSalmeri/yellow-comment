@@ -22,6 +22,8 @@ To add comments on other pages (that is, non-blog pages) create a [comments] sho
 
 To add comments on every page of the site, add `<?php echo $this->yellow->page->getExtra("comments") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContent() ?>`.
 
+If you want the comments section *not* to appear on a specific page, add `Comments: no` to the Settings at the top of it.
+
 \* Please remark that in the sample pages of the Blog extension comments are normally closed because of the publication date of the pages!
 
 Once installed, this Comments extension is particularly easy to use:

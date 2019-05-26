@@ -57,7 +57,7 @@ class YellowComments {
     // Handle page content parsing of custom block
     public function onParseContentShortcut($page, $name, $text, $type) {
         $output = null;
-        if ($name=="comments" && ($type=="block" || $type=="inline")) {
+        if ($name=="comments" && ($type=="block" || $type=="inline") && $this->yellow->page->get("comments")!="no") {
             list($opening) = $this->yellow->toolbox->getTextArgs($text);
             if ($opening == "") $opening = $this->yellow->system->get("commentsOpening");
             $this->areOpen = time()-$opening*86400 < strtotime($this->yellow->page->get("published")) || !$opening;
