@@ -1,4 +1,4 @@
-# Comments 0.8.3
+# Comments 0.8.9
 
 Simple commenting system.
 

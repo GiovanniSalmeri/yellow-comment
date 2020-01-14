@@ -29,7 +29,7 @@ class YellowComment {
 }
 
 class YellowComments {
-    const VERSION = "0.8.3";
+    const VERSION = "0.8.9";
     const TYPE = "feature";
     public $yellow;         //access to API
 
@@ -133,7 +133,7 @@ class YellowComments {
     public function onParsePageExtra($page, $name) {
         $output = null;
         if ($name=="header") {
-            $extensionLocation = $this->yellow->system->get("serverBase").$this->yellow->system->get("extensionLocation");
+            $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
             $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}comments.css\" />\n";
             $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comments-textarea.js\"></script>\n";
             if ($this->yellow->system->get("commentsIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comments-gravatar.js\"></script>\n";
@@ -210,7 +210,7 @@ class YellowComments {
             $status = "send";
             $this->lockComments($this->yellow->page, true);
             if ($this->pageText == "") {
-                $this->pageText = @file_get_contents(strreplaceu("(.*)", "comments", $this->yellow->system->get("settingDir").$this->yellow->system->get("newFile")));
+                $this->pageText = @file_get_contents(strreplaceu("(.*)", "comments", $this->yellow->system->get("coreSettingDir").$this->yellow->system->get("newFile")));
                 if ($this->pageText == "") { // autogenerate, no need for a template
                     $this->pageText = "---\nTitle: Comments\nParser: comments\n---\n";
                 }
