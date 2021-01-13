@@ -1,6 +1,6 @@
 <?php
-// Comment plugin
-// Copyright (c) 2016-2019 Authors (see git commit log)
+// Comments plugin, https://github.com/GiovanniSalmeri/yellow-comments
+// Copyright (c) 2016-2020 Giovanni Salmeri and previous authors (see git commit log)
 // This file may be used and distributed under the terms of the public license.
 
 class YellowComment {
@@ -29,8 +29,7 @@ class YellowComment {
 }
 
 class YellowComments {
-    const VERSION = "0.8.9";
-    const TYPE = "feature";
+    const VERSION = "0.8.16";
     public $yellow;         //access to API
 
     var $comments;
@@ -42,7 +41,7 @@ class YellowComments {
     public function onLoad($yellow) {
 	$this->yellow = $yellow;
         $this->yellow->system->setDefault("commentsModerator", "");
-        $this->yellow->system->setDefault("commentsDir", "comments/");
+        $this->yellow->system->setDefault("commentsDirectory", "comments/");
         $this->yellow->system->setDefault("commentsAutoPublish", "0");
         $this->yellow->system->setDefault("commentsMaxSize", "10000");
         $this->yellow->system->setDefault("commentsTimeout", "0");
@@ -58,7 +57,7 @@ class YellowComments {
     public function onParseContentShortcut($page, $name, $text, $type) {
         $output = null;
         if ($name=="comments" && ($type=="block" || $type=="inline") && $this->yellow->page->get("comments")!="no") {
-            list($opening) = $this->yellow->toolbox->getTextArgs($text);
+            list($opening) = $this->yellow->toolbox->getTextArguments($text);
             if ($opening == "") $opening = $this->yellow->system->get("commentsOpening");
             $this->areOpen = time()-$opening*86400 < strtotime($this->yellow->page->get("published")) || !$opening;
 
@@ -73,7 +72,7 @@ class YellowComments {
             $iconSize = intval($this->yellow->system->get("commentsIconSize")); 
 
             $output = "<div class=\"comments\" id=\"comments\">\n";
-            $output .= "<h2><span>" . $this->yellow->text->get("commentsComments") . " " . $this->getCommentCount() . "</span></h2>\n";
+            $output .= "<h2><span>" . $this->yellow->language->getText("commentsComments") . " " . $this->getCommentCount() . "</span></h2>\n";
             foreach ((array)$this->comments as $comment) {
                 if ($comment->isPublished()) {
                     $output .= "<div class=\"comment\" id=\"" . $comment->getHtml("uid") . "\">\n";
@@ -97,7 +96,7 @@ class YellowComments {
             }
             $output .= "<div class=\"content separate\" id=\"form\"></div>\n";
             if ($this->yellow->page->get("status") != "done" && $this->areOpen) {
-                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->text->getHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
+                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
                 $output .= "<form class=\"comments-form comment\" action=\"" . $this->yellow->page->getLocation(true) . "#form\" method=\"post\">\n";
                 if ($this->yellow->system->get("commentsIconGravatar")) {
                     $output .= "<div class=\"comments-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $_REQUEST["from"]) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentsIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
@@ -105,25 +104,25 @@ class YellowComments {
                     $output .= "<div class=\"comments-icon\"><img src=\"" . $this->getUserIcon($_REQUEST["from"]) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
                 }
                 $output .= "<div class=\"comments-main\">\n";
-                $output .= "<div class=\"comments-from\"><label for=\"from\">" . $this->yellow->text->getHtml("commentsEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . htmlspecialchars($_REQUEST["from"]) . "\" /></div>\n";
-                $output .= "<div class=\"comments-name\"><label for=\"name\">" . $this->yellow->text->getHtml("commentsName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . htmlspecialchars($_REQUEST["name"]) . "\" /></div>\n";
-                $output .= "<div class=\"comments-message\"><label for=\"message\">" . $this->yellow->text->getHtml("commentsHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . htmlspecialchars($_REQUEST["message"]) . "</textarea></div>\n";
-                $output .= "<div class=\"comments-comment\"><label for=\"comment\">" . $this->yellow->text->getHtml("commentsMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $this->yellow->system->get("commentsMaxSize") . "\">" . htmlspecialchars($_REQUEST["comment"]) . "</textarea></div>\n";
-                $output .= "<div class=\"comments-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($_REQUEST["consent"] ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->text->getHtml("commentsConsent") . "</label></div>\n";
+                $output .= "<div class=\"comments-from\"><label for=\"from\">" . $this->yellow->language->getTextHtml("commentsEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . htmlspecialchars($_REQUEST["from"]) . "\" /></div>\n";
+                $output .= "<div class=\"comments-name\"><label for=\"name\">" . $this->yellow->language->getTextHtml("commentsName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . htmlspecialchars($_REQUEST["name"]) . "\" /></div>\n";
+                $output .= "<div class=\"comments-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentsHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . htmlspecialchars($_REQUEST["message"]) . "</textarea></div>\n";
+                $output .= "<div class=\"comments-comment\"><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentsMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $this->yellow->system->get("commentsMaxSize") . "\">" . htmlspecialchars($_REQUEST["comment"]) . "</textarea></div>\n";
+                $output .= "<div class=\"comments-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($_REQUEST["consent"] ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentsConsent") . "</label></div>\n";
                 $output .= "<div>\n";
                 $output .= "<input type=\"hidden\" name=\"status\" value=\"send\" />\n";
-                $output .= "<input type=\"submit\" value=\"" . $this->yellow->text->getHtml("commentsButton") . "\" class=\"btn contact-btn\" />\n";
+                $output .= "<input type=\"submit\" value=\"" . $this->yellow->language->getTextHtml("commentsButton") . "\" class=\"btn contact-btn\" />\n";
                 $output .= "</div>\n";
                 $output .= "</div>\n";
                 $output .= "</form>\n";
                 $output .= "<p class=\"comments-info\">";
-                $output .= $this->yellow->text->get("commentsPrivacy") . " ";
-                $output .= $this->yellow->system->get("commentsIconGravatar") ? $this->yellow->text->get("commentsGravatar") . " " : "";
-                $output .= $this->yellow->text->get("commentsMarkdown") . " ";
-                $output .= !$this->yellow->system->get("commentsAutoPublish") ? $this->yellow->text->get("commentsManual") : "";
+                $output .= $this->yellow->language->getText("commentsPrivacy") . " ";
+                $output .= $this->yellow->system->get("commentsIconGravatar") ? $this->yellow->language->getText("commentsGravatar") . " " : "";
+                $output .= $this->yellow->language->getText("commentsMarkdown") . " ";
+                $output .= !$this->yellow->system->get("commentsAutoPublish") ? $this->yellow->language->getText("commentsManual") : "";
                 $output .= "</p>\n";
             } else {
-                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->text->getHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
+                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
             }
         }
         return $output;
@@ -151,7 +150,7 @@ class YellowComments {
 
     // Return file name from page object
     function getCommentFileName($page) {
-        return dirname($page->fileName) . "/" . $this->yellow->system->get("commentsDir") . basename($page->fileName);
+        return dirname($page->fileName) . "/" . $this->yellow->system->get("commentsDirectory") . basename($page->fileName);
     }
 
     // Lock comments file
@@ -191,8 +190,7 @@ class YellowComments {
             if (preg_match("/^(.+?)\n+---\n+(.*)/s", $content, $parts)) {
                 $comment = new YellowComment;
                 foreach (preg_split("/\n+/", $parts[1]) as $line) {
-                    preg_match("/^\s*(.*?)\s*:\s*(.*?)\s*$/", $line, $matches);
-                    if (!empty($matches[1]) && !empty($matches[2])) {
+                    if (preg_match("/^\s*(.*?)\s*:\s*(.*?)\s*$/", $line, $matches) && $matches[1] && $matches[2]) {
                         $comment->set(lcfirst($matches[1]), $matches[2]);
                         if (lcfirst($matches[1]) == "created") $this->yellow->page->setLastModified(strtotime($matches[2]));
                     }
@@ -210,7 +208,7 @@ class YellowComments {
             $status = "send";
             $this->lockComments($this->yellow->page, true);
             if ($this->pageText == "") {
-                $this->pageText = @file_get_contents(strreplaceu("(.*)", "comments", $this->yellow->system->get("coreSettingDir").$this->yellow->system->get("newFile")));
+                $this->pageText = @file_get_contents(strreplaceu("(.*)", "comments", $this->yellow->system->get("coreSettingDirectory").$this->yellow->system->get("newFile")));
                 if ($this->pageText == "") { // autogenerate, no need for a template
                     $this->pageText = "---\nTitle: Comments\nParser: comments\n---\n";
                 }
@@ -342,7 +340,7 @@ class YellowComments {
 
     // Send notification email
     function sendNotificationEmail($comment) {
-        $mailMessage = $this->yellow->text->get("commentsPublished")."\r\n\r\n";
+        $mailMessage = $this->yellow->language->getText("commentsPublished")."\r\n\r\n";
         $mailMessage .= $this->yellow->page->getUrl() . "#" . $comment->get("uid") . "\r\n\r\n";
         $mailMessage .= "-- \r\n";
         $mailMessage .= $this->yellow->system->get("sitename") . "\r\n";
@@ -379,8 +377,8 @@ class YellowComments {
             $text = $markdownHandler->text($text);
         }
 //        Simpler, but allows shortcodes
-//        if ($this->yellow->extensions->isExisting($this->yellow->system->get("parser"))) {
-//            $markdownHandler = $this->yellow->extensions->get($this->yellow->system->get("parser"));
+//        if ($this->yellow->extension->isExisting($this->yellow->system->get("parser"))) {
+//            $markdownHandler = $this->yellow->extension->get($this->yellow->system->get("parser"));
 //            $page->safeMode = true; // always disallow HTML in comments
 //            $text = $markdownHandler->onParseContentRaw($page, $text);
 //        }
