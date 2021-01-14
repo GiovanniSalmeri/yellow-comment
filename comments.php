@@ -204,11 +204,11 @@ class YellowComments {
     
     // Save comments
     function saveComments($checkSize) {
-        if (!$checkSize || (strlenu($comment->comment) < $this->yellow->system->get("commentsMaxSize"))) {
+        if (!$checkSize || (mb_strlen($comment->comment) < $this->yellow->system->get("commentsMaxSize"))) {
             $status = "send";
             $this->lockComments($this->yellow->page, true);
             if ($this->pageText == "") {
-                $this->pageText = @file_get_contents(strreplaceu("(.*)", "comments", $this->yellow->system->get("coreSettingDirectory").$this->yellow->system->get("newFile")));
+                $this->pageText = @file_get_contents(str_replace("(.*)", "comments", $this->yellow->system->get("coreSettingDirectory").$this->yellow->system->get("newFile")));
                 if ($this->pageText == "") { // autogenerate, no need for a template
                     $this->pageText = "---\nTitle: Comments\nParser: comments\n---\n";
                 }
@@ -421,8 +421,7 @@ class YellowComments {
             $pixel .= str_repeat($line, 8*$multiplicator);
         }
         $pixel = gzcompress($pixel, 6);
-        $length = strlen($pixel);
-        $png .= pack("N", $length);
+        $png .= pack("N", strlen($pixel));
         $png .= "\x49\x44\x41\x54" . $pixel;
         $png .= hash("crc32b", substr($png, 0x37), true);
         $png .= "\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82";
