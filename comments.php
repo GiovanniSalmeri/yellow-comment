@@ -90,7 +90,7 @@ class YellowComments {
 //            if ($this->yellow->page->get("status") == "done") {  // works only in FIrefox e Chrome
 //                $output .= "<script type=\"text/javascript\">window.addEventListener('load', function() { history.replaceState({}, null, location.href); })</script>\n";
 //            }
-            if ($_COOKIE["status"] == "done") {
+            if ($this->yellow->toolbox->getCookie("status")=="done") {
                 setcookie("status", "", 1);
                 $this->yellow->page->set("status", "done");
             }
@@ -99,16 +99,16 @@ class YellowComments {
                 $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
                 $output .= "<form class=\"comments-form comment\" action=\"" . $this->yellow->page->getLocation(true) . "#form\" method=\"post\">\n";
                 if ($this->yellow->system->get("commentsIconGravatar")) {
-                    $output .= "<div class=\"comments-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $_REQUEST["from"]) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentsIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
+                    $output .= "<div class=\"comments-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentsIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
                 } else {
-                    $output .= "<div class=\"comments-icon\"><img src=\"" . $this->getUserIcon($_REQUEST["from"]) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
+                    $output .= "<div class=\"comments-icon\"><img src=\"" . $this->getUserIcon($this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
                 }
                 $output .= "<div class=\"comments-main\">\n";
-                $output .= "<div class=\"comments-from\"><label for=\"from\">" . $this->yellow->language->getTextHtml("commentsEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . htmlspecialchars($_REQUEST["from"]) . "\" /></div>\n";
-                $output .= "<div class=\"comments-name\"><label for=\"name\">" . $this->yellow->language->getTextHtml("commentsName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . htmlspecialchars($_REQUEST["name"]) . "\" /></div>\n";
-                $output .= "<div class=\"comments-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentsHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . htmlspecialchars($_REQUEST["message"]) . "</textarea></div>\n";
-                $output .= "<div class=\"comments-comment\"><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentsMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $this->yellow->system->get("commentsMaxSize") . "\">" . htmlspecialchars($_REQUEST["comment"]) . "</textarea></div>\n";
-                $output .= "<div class=\"comments-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($_REQUEST["consent"] ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentsConsent") . "</label></div>\n";
+                $output .= "<div class=\"comments-from\"><label for=\"from\">" . $this->yellow->language->getTextHtml("commentsEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . $this->yellow->page->getRequestHtml("from") . "\" /></div>\n";
+                $output .= "<div class=\"comments-name\"><label for=\"name\">" . $this->yellow->language->getTextHtml("commentsName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . $this->yellow->page->getRequestHtml("name") . "\" /></div>\n";
+                $output .= "<div class=\"comments-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentsHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . $this->yellow->page->getRequestHtml("message") . "</textarea></div>\n";
+                $output .= "<div class=\"comments-comment\"><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentsMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $this->yellow->system->get("commentsMaxSize") . "\">" . $this->yellow->page->getRequestHtml("comment") . "</textarea></div>\n";
+                $output .= "<div class=\"comments-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($this->yellow->page->isRequest("consent") ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentsConsent") . "</label></div>\n";
                 $output .= "<div>\n";
                 $output .= "<input type=\"hidden\" name=\"status\" value=\"send\" />\n";
                 $output .= "<input type=\"submit\" value=\"" . $this->yellow->language->getTextHtml("commentsButton") . "\" class=\"btn contact-btn\" />\n";
@@ -242,14 +242,14 @@ class YellowComments {
     // Build comment from input
     function buildComment() {
         $comment = new YellowComment;
-        $comment->set("name", filter_var(trim($_REQUEST["name"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
-        $comment->set("from", filter_var(trim($_REQUEST["from"]), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
+        $comment->set("name", filter_var(trim($this->yellow->page->getRequest("name")), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
+        $comment->set("from", filter_var(trim($this->yellow->page->getRequest("from")), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
         $comment->set("created", date("Y-m-d H:i"));
-        $comment->set("fingerprint", $_ENV["REMOTE_ADDR"] . "@" . $_SERVER["REQUEST_TIME_FLOAT"]);
+        $comment->set("fingerprint", $_ENV["REMOTE_ADDR"] . "@" . $this->yellow->toolbox->getServer("REQUEST_TIME_FLOAT"));
         $comment->set("uid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
         $comment->set("aid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
         if (!$this->yellow->system->get("commentsAutoPublish")) $comment->set("published", "No");
-        $comment->comment = str_replace("\r\n", "\n", trim($_REQUEST["comment"]));
+        $comment->comment = str_replace("\r\n", "\n", trim($this->yellow->page->getRequest("comment")));
         $comment->comment = preg_replace("/^-{3,}$/m", "-$0", $comment->comment); // safety substitution
         return $comment;
     }
@@ -260,20 +260,20 @@ class YellowComments {
         $name = $comment->get("name");
         $from = $comment->get("from");
         $message = $comment->comment;
-        $consent = $_REQUEST["consent"];
+        $consent = $this->yellow->page->getRequest("consent");
         $spamFilter = $this->yellow->system->get("commentsSpamFilter");
         if (empty($name) || empty($from) || empty($message) || empty($consent)) $status = "incomplete";
         if (!empty($from) && !filter_var($from, FILTER_VALIDATE_EMAIL)) $status = "invalid";
         if (!empty($message) && preg_match("/$spamFilter/i", $message)) $status = "error";
-        if (!empty($_REQUEST["message"])) $status = "error"; // honeypot
+        if (!empty($this->yellow->page->getRequest("message"))) $status = "error"; // honeypot
         return $status;
     }
 
     // Process user input
     function processSend() {
         if ($this->yellow->isCommandLine()) $this->yellow->page->error(500, "Static website not supported!");
-        $aid = trim($_REQUEST["aid"]);
-        $action = trim($_REQUEST["action"]);
+        $aid = trim($this->yellow->page->getRequest("aid"));
+        $action = trim($this->yellow->page->getRequest("action"));
         if ($aid) {
             $changed = false;
             foreach ($this->comments as &$comment) {
@@ -293,7 +293,7 @@ class YellowComments {
             }
             if ($changed) $this->saveComments(false);
         }
-        $status = trim($_REQUEST["status"]);
+        $status = trim($this->yellow->page->getRequest("status"));
         if ($status == "send") {
             $comment = $this->buildComment();
             $status = $this->verifyComment($comment);
@@ -332,7 +332,7 @@ class YellowComments {
         $mailSubject = mb_encode_mimeheader("[".$this->yellow->system->get("sitename")."] " . $this->yellow->page->get("title"));
         $mailHeaders = "From: " . mb_encode_mimeheader($comment->get("name")) . " <" . $comment->get("from") . ">\r\n";
         $mailHeaders .= "X-Contact-Url: " . mb_encode_mimeheader($this->yellow->page->getUrl()) . "\r\n";
-        $mailHeaders .= "X-Remote-Addr: " . mb_encode_mimeheader($_SERVER["REMOTE_ADDR"]) . "\r\n";
+        $mailHeaders .= "X-Remote-Addr: " . mb_encode_mimeheader($this->yellow->toolbox->getServer("REMOTE_ADDR")) . "\r\n";
         $mailHeaders .= "Mime-Version: 1.0\r\n";
         $mailHeaders .= "Content-Type: text/plain; charset=utf-8\r\n";
         return mail($this->getEmail(), $mailSubject, $mailMessage, $mailHeaders) ? "done" : "error";
@@ -412,6 +412,7 @@ class YellowComments {
         $png .= substr(pack("N", $color_background), 1);
         $png .= hash("crc32b", substr($png, 0x25), true);
         $map = [0, 1, 2, 1, 0];
+        $pixel = "";
         for ($y=0; $y < 5; $y++) {
             $line = "\x00";
             for ($x=0; $x < 5; $x++) {
