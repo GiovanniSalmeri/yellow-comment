@@ -47,8 +47,8 @@ The following settings can be configured in file `system/settings/system.ini`. Y
 
 [Download extension](https://github.com/GiovanniSalmeri/yellow-comments/archive/master.zip) and copy zip file into your `system/extensions` folder. Right click if you use Safari.
 
-To uninstall delete the [extension files](extension.ini).
-
 ## Developers
 
-Previous developers nasendackel, wunderfeyd; current developer Giovanni Salmeri. [Get help](https://github.com/GiovanniSalmeri/yellow-comments/issues).
+Giovanni Salmeri. [Get help](https://github.com/GiovanniSalmeri/yellow-comments/issues).
+
+Previous developers nasendackel, wunderfeyd
