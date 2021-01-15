@@ -1,6 +1,6 @@
 <?php
 // Comments plugin, https://github.com/GiovanniSalmeri/yellow-comments
-// Copyright (c) 2016-2020 Giovanni Salmeri and previous authors (see git commit log)
+// Copyright (c) 2016-2021 Giovanni Salmeri and previous authors (see git commit log)
 // This file may be used and distributed under the terms of the public license.
 
 class YellowComment {
@@ -14,12 +14,12 @@ class YellowComment {
     
     // Return comment meta data
     function get($key) {
-        return $this->metaData[$key];
+        return isset($this->metaData[$key]) ? $this->metaData[$key] : null;
     }
 
     // Return comment meta data, HTML encoded
     function getHtml($key) {
-        return htmlspecialchars($this->metaData[$key]);
+        return isset($this->metaData[$key]) ? htmlspecialchars($this->metaData[$key]) : null;
     }
     
     // Check if comment was published
@@ -79,17 +79,13 @@ class YellowComments {
                     $output .= "<div class=\"comment-icon\"><img src=\"" . $this->getUserIcon($comment->get("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
                     $output .= "<div class=\"comment-main\">\n";
                     $output .= "<div class=\"comment-name\">" . $comment->getHtml("name") . "</div>\n";
-                    $output .= "<div class=\"comment-date\">" . $this->yellow->text->normaliseDate($comment->get("created")) . "</div>\n";
+                    $output .= "<div class=\"comment-date\">" . $this->yellow->language->normaliseDate($comment->get("created")) . "</div>\n";
                     $output .= "<div class=\"comment-content\">" . $this->transformText($this->yellow->page, $comment->comment) . "</div>\n";
                     $output .= "</div>\n";
                     $output .= "</div>\n";
                 }
             }
             $output .= "</div>\n";
-
-//            if ($this->yellow->page->get("status") == "done") {  // works only in FIrefox e Chrome
-//                $output .= "<script type=\"text/javascript\">window.addEventListener('load', function() { history.replaceState({}, null, location.href); })</script>\n";
-//            }
             if ($this->yellow->toolbox->getCookie("status")=="done") {
                 setcookie("status", "", 1);
                 $this->yellow->page->set("status", "done");
@@ -245,9 +241,8 @@ class YellowComments {
         $comment->set("name", filter_var(trim($this->yellow->page->getRequest("name")), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
         $comment->set("from", filter_var(trim($this->yellow->page->getRequest("from")), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW));
         $comment->set("created", date("Y-m-d H:i"));
-        $comment->set("fingerprint", $_ENV["REMOTE_ADDR"] . "@" . $this->yellow->toolbox->getServer("REQUEST_TIME_FLOAT"));
-        $comment->set("uid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
-        $comment->set("aid", hash("sha256", $this->yellow->toolbox->createSalt(64)));
+        $comment->set("uid", md5(uniqid('', true)));
+        $comment->set("aid", md5(uniqid('', true)));
         if (!$this->yellow->system->get("commentsAutoPublish")) $comment->set("published", "No");
         $comment->comment = str_replace("\r\n", "\n", trim($this->yellow->page->getRequest("comment")));
         $comment->comment = preg_replace("/^-{3,}$/m", "-$0", $comment->comment); // safety substitution
@@ -276,22 +271,21 @@ class YellowComments {
         $action = trim($this->yellow->page->getRequest("action"));
         if ($aid) {
             $changed = false;
-            foreach ($this->comments as &$comment) {
+            foreach ($this->comments as $key => &$comment) {
                 if ($comment->get("aid") == $aid) {
                     if ($action == "remove") {
-                        unset($comment);
-                        $changed = true;
+                        unset($this->comments[$key]);
+                        $this->saveComments(false);
                         break;
                     } elseif ($action == "publish") {
                         $comment->set("published", null);
-                        $changed = true;
+                        $this->saveComments(false);
                         if ($this->yellow->system->get("commentsAuthorNotification"))
                             $this->sendNotificationEmail($comment);
                         break;
                     }
                 }
             }
-            if ($changed) $this->saveComments(false);
         }
         $status = trim($this->yellow->page->getRequest("status"));
         if ($status == "send") {
@@ -303,10 +297,6 @@ class YellowComments {
                 $status = $this->saveComments(true);
             }
             if ($status == "send" && $this->getEmail()) $status = $this->sendEmail($comment);
-//            if ($status == "done") { // post/redirect/get
-//                setcookie("status", "done");
-//                $this->yellow->page->clean(303, $this->yellow->page->getLocation(true));
-//            }
             $this->yellow->page->setHeader("Last-Modified", $this->yellow->toolbox->getHttpDateFormatted(time()));
             $this->yellow->page->setHeader("Cache-Control", "no-cache, must-revalidate");
         } else {
@@ -322,7 +312,6 @@ class YellowComments {
         $mailMessage .= "Name: " . $comment->get("name") . "\r\n";
         $mailMessage .= "Mail: " . $comment->get("from") . "\r\n";
         $mailMessage .= "Uid:  " . $comment->get("uid") . "\r\n";
-        $mailMessage .= "Fingerprint:  " . $comment->get("fingerprint") . "\r\n";
         $mailMessage .= "-- \r\n";
         if (!$this->yellow->system->get("commentsAutoPublish")) {
             $mailMessage.= "Publish: " . $this->yellow->page->getUrl() . "?aid=" . $comment->get("aid") . "&action=publish\r\n";
