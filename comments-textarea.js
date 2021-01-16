@@ -1,3 +1,4 @@
+"use strict";
 // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
 window.addEventListener("load", function() {
 	var tx = document.getElementsByTagName('textarea');
@@ -8,5 +9,6 @@ window.addEventListener("load", function() {
 	function OnInput() {
 		this.style.height = 'auto';
 		this.style.height = this.scrollHeight + 'px';
+		this.nextSibling.firstChild.data = this.value.length + ' / ' + this.maxLength;
 	}
 });
