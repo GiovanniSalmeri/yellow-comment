@@ -51,3 +51,7 @@ form div {
 .none, .done, .closed {
     font-weight: bold;
 }
+.comment-charcount {
+    display: block;
+    text-align: right;
+}
