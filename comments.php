@@ -1,7 +1,5 @@
 <?php
 // Comments extension, https://github.com/GiovanniSalmeri/yellow-comments
-// Copyright (c) 2016-2021 Giovanni Salmeri and previous authors (see git commit log)
-// This file may be used and distributed under the terms of the public license.
 
 class YellowComments {
     const VERSION = "0.8.16";

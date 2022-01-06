@@ -1,3 +1,5 @@
+// Comments extension, https://github.com/GiovanniSalmeri/yellow-comments
+
 document.addEventListener("DOMContentLoaded", function() {
 	document.getElementById('from').addEventListener("change", fillOutFrom);
 });
