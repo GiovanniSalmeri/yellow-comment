@@ -2,7 +2,7 @@
 // Comments extension, https://github.com/GiovanniSalmeri/yellow-comments
 
 class YellowComments {
-    const VERSION = "0.8.16";
+    const VERSION = "0.8.17";
     public $yellow;         //access to API
 
     var $comments;
@@ -39,7 +39,7 @@ class YellowComments {
             $this->processSend();
             if ($this->yellow->page->get("status") == "done") { // post/redirect/get
                 setcookie("status", "done");
-                $this->yellow->page->clean(303, $this->yellow->page->getLocation(true));
+                $this->yellow->page->status(303, $this->yellow->page->getLocation(true));
             }
             $this->unlockComments();
             $iconSize = $this->yellow->system->get("commentsIconSize");
