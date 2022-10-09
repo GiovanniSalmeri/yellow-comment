@@ -30,7 +30,7 @@ Embedding comments in a non-blog page:
 The following settings can be configured in file `system/extensions/yellow-system.ini`. You can leave alone the default values and all will work sensibly.
 
 `CommentsModerator` (default: (empty)) = email address of moderator. If not present, main `email` address of site is used; this value can be overridden with a setting `Moderator` in the page.  
-`CommentsDir` (default:  `Comments/`) = the location where your comment files are stored  
+`CommentsDirectory` (default:  `comments/`) = directory for comments  
 `CommentsAutoPublish` (default:  `0`) = if set to `1` any comment is published immediately and the moderator can later remove it; if set to `0` no comment is published unless the moderator approves it (except particular cases, this latter behaviour is much more desirable)  
 `CommentsMaxSize` (default:  `5000`) = maximum size of a comment  
 `CommentsTimeout` (default:  `0`) = number of days after which a comment is permanently deleted if not approved for publication; if set to `0` comments are never automatically deleted  
