@@ -74,8 +74,8 @@ The following settings can be configured in file `system/extensions/yellow-syste
 
 ## Acknowledgements
 
-This extension was developed together with nasendackel, wunderfeyd. Thank you for the good work.
+This extension was previously maintained by Christoph Schröder and David Fehrmann. Thank you for the good work.
 
-## Developers
+## Developer
 
 Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/).
