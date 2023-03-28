@@ -4,30 +4,60 @@ Simple commenting system.
 
 <p align="center"><img src="comments-screenshot.png?raw=true" alt="Screenshot"></p>
 
-## How to use Comments
+## How to install an extension
+
+[Download ZIP file](https://github.com/GiovanniSalmeri/yellow-comments/archive/main.zip) and copy it into your `system/extensions` folder. [Learn more about extensions](https://github.com/annaesvensson/yellow-update).
+
+## How to show comments
 
 The extension adds automatically a comments section on blog pages.
 
-To add comments on other pages (that is, non-blog pages) create a [comments] shortcut at the end of each page in which you want a comments section. In this case the following optional argument is available:
+To add comments on other pages (that is, non-blog pages) create a `[comments]` shortcut at the end of each page in which you want a comments section. In this case the following optional argument is available:
 
 `opening` = number of days from publication after which comments are closed; this argument, if present, overrides the `CommentsOpening` setting (in other words: this value is used and `CommentsOpening` is ignored). See below for details and for the meaning of the special values `0` and `-1`.
 
 To put comments on every page of the site, add `<?php echo $this->yellow->page->getExtra("comments") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContent() ?>`.
 
-If you want the comments section *not* to appear on a specific page, add `Comments: no` in the [settings](https://github.com/annaesvensson/yellow-core#settings) at the top of it.
+If you don't want that comments are shown on a page, set `Comments: no` in the [page settings](https://github.com/annaesvensson/yellow-core#settings-page) at the top of a page.
 
-## Example
+## Examples
 
-Embedding comments in a non-blog page:
+Content file with comments:
 
-```
-[comments]
-[comments 0]
-```
+    ---
+    Title: Example page
+    ---
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut 
+    labore et dolore magna pizza. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit 
+    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt 
+    in culpa qui officia deserunt mollit anim id est laborum.
+    
+    [comments]
 
+Preventing that comments are shown:
+
+    ---
+    Title: Example page
+    Comments: no
+    ---
+    This page does not show comments.
+
+Layout file with comments:
+
+    <?php $this->yellow->layout("header") ?>
+    <div class="content">
+    <div class="main" role="main">
+    <h1><?php echo $this->yellow->page->getHtml("titleContent") ?></h1>
+    <?php echo $this->yellow->page->getContent() ?>
+    <?php echo $this->yellow->page->getExtra("comments") ?>
+    </div>
+    </div>
+    <?php $this->yellow->layout("footer") ?>
+    
 ## Settings
 
-The following settings can be configured in file `system/extensions/yellow-system.ini`. You can leave alone the default values and all will work sensibly.
+The following settings can be configured in file `system/extensions/yellow-system.ini`:
 
 `CommentsModerator` (default: (empty)) = email address of moderator. If not present, main `email` address of site is used; this value can be overridden with a setting `Moderator` in the page.  
 `CommentsDirectory` (default:  `comments/`) = directory for comments  
@@ -42,12 +72,10 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `CommentsIconGravatarDefault` (default:  `mp`) = default image for Gravatar (see the [documentation](https://en.gravatar.com/site/implement/images/) for possible values)  
 `CommentsConsent` (default:  `0`) = shows a consent checkbox (not required by European GDPR)   
 
-## Installation
+## Acknowledgements
 
-[Download extension](https://github.com/GiovanniSalmeri/yellow-comments/archive/main.zip) and copy zip file into your `system/extensions` folder. Right click if you use Safari.
+This extension was previously maintained by Christoph Schröder and David Fehrmann. Thank you for the good work.
 
-## Developers
+## Developer
 
-Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/)
-
-Previous developers nasendackel, wunderfeyd
+Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/).
