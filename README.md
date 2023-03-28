@@ -78,4 +78,4 @@ This extension was developed together with nasendackel, wunderfeyd. Thank you fo
 
 ## Developers
 
-Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/)
+Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/).
