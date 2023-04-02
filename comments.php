@@ -212,13 +212,13 @@ class YellowComments {
         $text = $comment["text"];
         $consent = $this->yellow->page->getRequest("consent");
         $spamFilter = $this->yellow->system->get("commentsSpamFilter");
-        if (strempty($name) || strempty($from) || strempty($text) || (strempty($consent) && $this->yellow->system->get("commentsConsent"))) {
+        if (is_string_empty($name) || is_string_empty($from) || is_string_empty($text) || (is_string_empty($consent) && $this->yellow->system->get("commentsConsent"))) {
             return "incomplete";
-        } elseif (!strempty($from) && !filter_var($from, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!is_string_empty($from) && !filter_var($from, FILTER_VALIDATE_EMAIL)) {
             return "invalid";
-        } elseif (!strempty($text) && preg_match('/'.str_replace(['\\', '/'], ['\\\\', '\\/'], $spamFilter).'/i', $text)) {
+        } elseif (!is_string_empty($text) && preg_match('/'.str_replace(['\\', '/'], ['\\\\', '\\/'], $spamFilter).'/i', $text)) {
             return "error";
-        } elseif (!strempty($this->yellow->page->getRequest("message"))) {
+        } elseif (!is_string_empty($this->yellow->page->getRequest("message"))) {
             return "error"; // honeypot
         } elseif (strlenu($text) > $this->yellow->system->get("commentsMaxSize")) {
             return "toolong"; // should be avoided by maxlenght in textarea
