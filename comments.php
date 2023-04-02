@@ -143,10 +143,10 @@ class YellowComments {
 
     // Load comments
     function loadComments() {
+        $this->comments = [];
         if (!$this->fileHandle) return;
         $length = fstat($this->fileHandle)['size'];
         $contents = array_slice(explode("\n\n---\n", str_replace("\r\n", "\n", $length>0 ? fread($this->fileHandle, $length) : "")), 1);
-        $this->comments = [];
         foreach ($contents as $content) {
             if (preg_match("/^(.+?)\n+---\n+(.*)/s", $content, $parts)) {
                 $comment = [];
@@ -194,8 +194,8 @@ class YellowComments {
     // Build comment from input
     function buildComment() {
         $comment = [];
-        $comment["meta"]["name"] = filter_var(trim($this->yellow->page->getRequest("name")), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-        $comment["meta"]["from"] = filter_var(trim($this->yellow->page->getRequest("from")), FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+        $comment["meta"]["name"] = filter_var(trim($this->yellow->page->getRequest("name")), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
+        $comment["meta"]["from"] = filter_var(trim($this->yellow->page->getRequest("from")), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         $comment["meta"]["created"] = date("Y-m-d H:i");
         $comment["meta"]["published"] = $this->yellow->system->get("commentsAutoPublish") ? $comment["meta"]["created"] : "No";
         $comment["meta"]["uid"] = md5($this->yellow->toolbox->getServer("REMOTE_ADDR").uniqid());
