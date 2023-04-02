@@ -1,8 +1,8 @@
 <?php
-// Comments extension, https://github.com/GiovanniSalmeri/yellow-comments
+// Comment extension, https://github.com/GiovanniSalmeri/yellow-comment
 
-class YellowComments {
-    const VERSION = "0.8.17";
+class YellowComment {
+    const VERSION = "0.8.18";
     public $yellow;         //access to API
 
     var $comments;
@@ -12,109 +12,110 @@ class YellowComments {
     // Handle initialisation
     public function onLoad($yellow) {
     $this->yellow = $yellow;
-        $this->yellow->system->setDefault("commentsModerator", "");
-        $this->yellow->system->setDefault("commentsDirectory", "comments/");
-        $this->yellow->system->setDefault("commentsAutoPublish", "0");
-        $this->yellow->system->setDefault("commentsMaxSize", "5000");
-        $this->yellow->system->setDefault("commentsTimeout", "0");
-        $this->yellow->system->setDefault("commentsOpening", "30");
-        $this->yellow->system->setDefault("commentsAuthorNotification", "1");
-        $this->yellow->system->setDefault("commentsSpamFilter", "href=|url=");
-        $this->yellow->system->setDefault("commentsIconSize", "80");
-        $this->yellow->system->setDefault("commentsIconGravatar", "0");
-        $this->yellow->system->setDefault("commentsIconGravatarDefault", "mp");
-        $this->yellow->system->setDefault("commentsConsent", "0");
+        $this->yellow->system->setDefault("commentModerator", "");
+        $this->yellow->system->setDefault("commentDirectory", "comment/");
+        $this->yellow->system->setDefault("commentAutoPublish", "0");
+        $this->yellow->system->setDefault("commentMaxSize", "5000");
+        $this->yellow->system->setDefault("commentTimeout", "0");
+        $this->yellow->system->setDefault("commentOpening", "30");
+        $this->yellow->system->setDefault("commentAuthorNotification", "1");
+        $this->yellow->system->setDefault("commentSpamFilter", "href=|url=");
+        $this->yellow->system->setDefault("commentIconSize", "80");
+        $this->yellow->system->setDefault("commentIconGravatar", "0");
+        $this->yellow->system->setDefault("commentIconGravatarDefault", "mp");
+        $this->yellow->system->setDefault("commentConsent", "0");
         $this->yellow->language->setDefaults([
             "Language: en",
-            "CommentsComments: Comments:",
-            "CommentsStatusNone: Interested to discuss? Leave a comment.",
-            "CommentsStatusClosed: Comments are closed.",
-            "CommentsStatusDone: Thanks for your feedback.",
-            "CommentsPrivacy: Your email will not be published nor shared with anyone.",
-            "CommentsGravatar: Please use the service <a href=\"https://en.gravatar.com\">Gravatar</a> if you would like a photo beside your name.",
-            "CommentsMarkdown: In your text you can use <code>*italic*</code>, <code>**bold**</code>, <code>[links](http://example.org)</code>.",
-            "CommentsManual: These comments are moderated and published manually as soon as possible.",
-            "CommentsPublished: Your comment has been published. Thank you very much!",
-            "CommentsHoneypot: Please leave this field blank:",
-            "CommentsName: Name:",
-            "CommentsEmail: Email:",
-            "CommentsMessage: Message:",
-            "CommentsConsent: I consent that this website stores my message.",
-            "CommentsButton: Send message",
-            "CommentsStatusIncomplete: Please fill out all fields.",
-            "CommentsStatusInvalid: Please enter a valid email.",
-            "CommentsStatusError: Your comment could not be sent, please try again later.",
-            "CommentsStatusToolong: Your comment is too long, please be more concise...",
+            "CommentCommentList: Comments:",
+            "CommentStatusNone: Interested to discuss? Leave a comment.",
+            "CommentStatusClosed: Comments are closed.",
+            "CommentStatusDone: Thanks for your feedback.",
+            "CommentPrivacy: Your email will not be published nor shared with anyone.",
+            "CommentGravatar: Please use the service <a href=\"https://en.gravatar.com\">Gravatar</a> if you would like a photo beside your name.",
+            "CommentMarkdown: In your text you can use <code>*italic*</code>, <code>**bold**</code>, <code>[links](http://example.org)</code>.",
+            "CommentManual: These comments are moderated and published manually as soon as possible.",
+            "CommentPublished: Your comment has been published. Thank you very much!",
+            "CommentHoneypot: Please leave this field blank:",
+            "CommentName: Name:",
+            "CommentEmail: Email:",
+            "CommentMessage: Message:",
+            "CommentConsent: I consent that this website stores my message.",
+            "CommentButton: Send message",
+            "CommentStatusIncomplete: Please fill out all fields.",
+            "CommentStatusInvalid: Please enter a valid email.",
+            "CommentStatusError: Your comment could not be sent, please try again later.",
+            "CommentStatusToolong: Your comment is too long, please be more concise...",
             "Language: de",
-            "CommentsComments: Kommentare:",
-            "CommentsStatusNone: Interesse an einer Diskussion? Schreibe einen Kommentar.",
-            "CommentsStatusClosed: Kommentare sind geschlossen.",
-            "CommentsStatusDone: Danke für die Rückmeldung.",
-            "CommentsPrivacy: Die E-Mail-Adresse wird nicht veröffentlicht noch an Dritte weitergegeben.",
-            "CommentsGravatar: Benutze <a href=\"https://de.gravatar.com\">Gravatar</a>, wenn ein Bild neben deinem Namen erscheinen soll.",
-            "CommentsMarkdown: In deinem Text kannst du <code>*Kursivschrift*</code>, <code>**Fettschrift**</code> und <code>[Links](http://example.org)</code> verwenden.",
-            "CommentsManual: Der Kommentar wird moderiert und so bald wie möglich freigeschaltet.",
-            "CommentsPublished: Dein Kommentar wurde veröffentlicht. Danke schön!",
-            "CommentsHoneypot: Dieses Feld bitte leer lassen:",
-            "CommentsName: Name:",
-            "CommentsEmail: E-Mail:",
-            "CommentsMessage: Nachricht:",
-            "CommentsConsent: Ich stimme zu, dass diese Webseite meine Nachricht speichert.",
-            "CommentsButton: Nachricht absenden",
-            "CommentsStatusIncomplete: Bitte alle Felder ausfüllen.",
-            "CommentsStatusInvalid: Bitte eine gültige E-Mail angeben.",
-            "CommentsStatusError: Nachricht konnte nicht versandt werden, versuche es später erneut.",
-            "CommentsStatusToolong: Dein Kommentar ist zu lang, bitte fasse dich besser zusammen...",
+            "CommentCommentList: Kommentare:",
+            "CommentStatusNone: Interesse an einer Diskussion? Schreibe einen Kommentar.",
+            "CommentStatusClosed: Kommentare sind geschlossen.",
+            "CommentStatusDone: Danke für die Rückmeldung.",
+            "CommentPrivacy: Die E-Mail-Adresse wird nicht veröffentlicht noch an Dritte weitergegeben.",
+            "CommentGravatar: Benutze <a href=\"https://de.gravatar.com\">Gravatar</a>, wenn ein Bild neben deinem Namen erscheinen soll.",
+            "CommentMarkdown: In deinem Text kannst du <code>*Kursivschrift*</code>, <code>**Fettschrift**</code> und <code>[Links](http://example.org)</code> verwenden.",
+            "CommentManual: Der Kommentar wird moderiert und so bald wie möglich freigeschaltet.",
+            "CommentPublished: Dein Kommentar wurde veröffentlicht. Danke schön!",
+            "CommentHoneypot: Dieses Feld bitte leer lassen:",
+            "CommentName: Name:",
+            "CommentEmail: E-Mail:",
+            "CommentMessage: Nachricht:",
+            "CommentConsent: Ich stimme zu, dass diese Webseite meine Nachricht speichert.",
+            "CommentButton: Nachricht absenden",
+            "CommentStatusIncomplete: Bitte alle Felder ausfüllen.",
+            "CommentStatusInvalid: Bitte eine gültige E-Mail angeben.",
+            "CommentStatusError: Nachricht konnte nicht versandt werden, versuche es später erneut.",
+            "CommentStatusToolong: Dein Kommentar ist zu lang, bitte fasse dich besser zusammen...",
             "Language: fr",
-            "CommentsComments: Commentaires:",
-            "CommentsStatusNone: Envie de discuter? Laissez un commentaire.",
-            "CommentsStatusClosed: Les commentaires sont fermés.",
-            "CommentsStatusDone: Merci de votre participation.",
-            "CommentsPrivacy: L'adresse email ne sera pas publiée ni partagée avec autrui.",
-            "CommentsGravatar: Si vous voulez une photo à côté de votre nom, utilisez le service <a href=\"https://fr.gravatar.com\">Gravatar</a>.",
-            "CommentsMarkdown: Dans votre texte vous pouvez utiliser l'<code>*italique*</code>, le <code>**gras**</code>, les <code>[liens](http://example.org)</code>.",
-            "CommentsManual: Les commentaires sont modérés et publiés manuellement dès que possible.",
-            "CommentsPublished: Votre commentaire a été publié. Merci de votre participation!",
-            "CommentsHoneypot: Laissez ce champ vide, s'il vous plaît:",
-            "CommentsName: Nom:",
-            "CommentsEmail: Email:",
-            "CommentsMessage: Message:",
-            "CommentsConsent: Je consens à ce que ce site stocke mon message.",
-            "CommentsButton: Envoyer le message",
-            "CommentsStatusIncomplete: S'il vous plaît, veuillez remplir tous les champs.",
-            "CommentsStatusInvalid: S'il vous plaît, veuillez entrer une adresse email valide.",
-            "CommentsStatusError: Votre message n'a pas pu être envoyé, réessayez plus tard s'il vous plaît.",
-            "CommentsStatusToolong: Votre commentaire est trop long, veuillez être plus concis...",
+            "CommentCommentList: Commentaires:",
+            "CommentStatusNone: Envie de discuter? Laissez un commentaire.",
+            "CommentStatusClosed: Les commentaires sont fermés.",
+            "CommentStatusDone: Merci de votre participation.",
+            "CommentPrivacy: L'adresse email ne sera pas publiée ni partagée avec autrui.",
+            "CommentGravatar: Si vous voulez une photo à côté de votre nom, utilisez le service <a href=\"https://fr.gravatar.com\">Gravatar</a>.",
+            "CommentMarkdown: Dans votre texte vous pouvez utiliser l'<code>*italique*</code>, le <code>**gras**</code>, les <code>[liens](http://example.org)</code>.",
+            "CommentManual: Les commentaires sont modérés et publiés manuellement dès que possible.",
+            "CommentPublished: Votre commentaire a été publié. Merci de votre participation!",
+            "CommentHoneypot: Laissez ce champ vide, s'il vous plaît:",
+            "CommentName: Nom:",
+            "CommentEmail: Email:",
+            "CommentMessage: Message:",
+            "CommentConsent: Je consens à ce que ce site stocke mon message.",
+            "CommentButton: Envoyer le message",
+            "CommentStatusIncomplete: S'il vous plaît, veuillez remplir tous les champs.",
+            "CommentStatusInvalid: S'il vous plaît, veuillez entrer une adresse email valide.",
+            "CommentStatusError: Votre message n'a pas pu être envoyé, réessayez plus tard s'il vous plaît.",
+            "CommentStatusToolong: Votre commentaire est trop long, veuillez être plus concis...",
             "Language: it",
-            "CommentsComments: Commenti:",
-            "CommentsStatusNone: Vuoi contribuire alla discussione? Lascia un commento!",
-            "CommentsStatusClosed: I commenti sono chiusi.",
-            "CommentsStatusDone: Grazie per il contributo!",
-            "CommentsPrivacy: Il tuo indirizzo di posta elettronica non sarà né pubblicato né ceduto a terzi.",
-            "CommentsGravatar: Usa il servizio <a href=\"https://it.gravatar.com\">Gravatar</a> se vuoi che sia mostrata una foto accanto al tuo nome.",
-            "CommentsMarkdown: Nel testo puoi usare il <code>*corsivo*</code>, il <code>**neretto**</code>, i  <code>[collegamenti](http://example.org)</code>.",
+            "CommentCommentList: Commenti:",
+            "CommentStatusNone: Vuoi contribuire alla discussione? Lascia un commento!",
+            "CommentStatusClosed: I commenti sono chiusi.",
+            "CommentStatusDone: Grazie per il contributo!",
+            "CommentPrivacy: Il tuo indirizzo di posta elettronica non sarà né pubblicato né ceduto a terzi.",
+            "CommentGravatar: Usa il servizio <a href=\"https://it.gravatar.com\">Gravatar</a> se vuoi che sia mostrata una foto accanto al tuo nome.",
+            "CommentMarkdown: Nel testo puoi usare il <code>*corsivo*</code>, il <code>**neretto**</code>, i  <code>[collegamenti](http://example.org)</code>.",
             "i collegamenti <code>&lt;http://example.org&gt;</code> e altri elementi.",
-            "CommentsManual: I commenti sono moderati e pubblicati manualmente appena possibile.",
-            "CommentsPublished: Il tuo commento è stato pubblicato. Grazie per il contributo!",
-            "CommentsHoneypot: Lascia questo campo vuoto:",
-            "CommentsName: Nome:",
-            "CommentsEmail: Email:",
-            "CommentsMessage: Messaggio:",
-            "CommentsConsent: Acconsento alla registrazione del mio messaggio in questo sito.",
-            "CommentsButton: Invia il messaggio",
-            "CommentsStatusIncomplete: Compila per favore tutti i campi.",
-            "CommentsStatusInvalid: Inserisci per favore un indirizzo email valido.",
-            "CommentsStatusError: C'è stato un problema nell'invio del messaggio. Riprova per favore più tardi.",
-            "CommentsStatusToolong: Il commento è troppo lungo, prova ad essere più conciso...",
+            "CommentManual: I commenti sono moderati e pubblicati manualmente appena possibile.",
+            "CommentPublished: Il tuo commento è stato pubblicato. Grazie per il contributo!",
+            "CommentHoneypot: Lascia questo campo vuoto:",
+            "CommentName: Nome:",
+            "CommentEmail: Email:",
+            "CommentMessage: Messaggio:",
+            "CommentConsent: Acconsento alla registrazione del mio messaggio in questo sito.",
+            "CommentButton: Invia il messaggio",
+            "CommentStatusIncomplete: Compila per favore tutti i campi.",
+            "CommentStatusInvalid: Inserisci per favore un indirizzo email valido.",
+            "CommentStatusError: C'è stato un problema nell'invio del messaggio. Riprova per favore più tardi.",
+            "CommentStatusToolong: Il commento è troppo lungo, prova ad essere più conciso...",
         ]);
     }
 
     // Handle page content parsing of custom block
     public function onParseContentShortcut($page, $name, $text, $type) {
         $output = null;
-        if ($name=="comments" && ($type=="block" || $type=="inline") && $this->yellow->page->get("comments")!=="no") {
+        if ($name=="comment" && ($type=="block" || $type=="inline") &&
+strtolower($page->get("comment"))!=="exclude") {
             list($opening) = $this->yellow->toolbox->getTextArguments($text);
-            if ($opening == "") $opening = $this->yellow->system->get("commentsOpening");
+            if ($opening == "") $opening = $this->yellow->system->get("commentOpening");
             $this->areOpen = time()-$opening*86400 < strtotime($this->yellow->page->get("published")) || !$opening;
 
             $this->lockComments($this->yellow->page, false);
@@ -125,11 +126,11 @@ class YellowComments {
                 $this->yellow->page->status(303, $this->yellow->page->getLocation(true));
             }
             $this->unlockComments();
-            $iconSize = $this->yellow->system->get("commentsIconSize");
-            $maxSize = $this->yellow->system->get("commentsMaxSize");
+            $iconSize = $this->yellow->system->get("commentIconSize");
+            $maxSize = $this->yellow->system->get("commentMaxSize");
 
-            $output = "<div class=\"comments\" id=\"comments\">\n";
-            $output .= "<h2><span>" . $this->yellow->language->getText("commentsComments") . " " . $this->getCommentCount() . "</span></h2>\n";
+            $output = "<div class=\"comment\" id=\"comment\">\n";
+            $output .= "<h2><span>" . $this->yellow->language->getText("commentCommentList") . " " . $this->getCommentCount() . "</span></h2>\n";
             foreach ($this->comments as $comment) {
                 if ($comment["meta"]["published"] !== "No") {
                     $output .= "<div class=\"comment\" id=\"" . htmlspecialchars($comment["meta"]["uid"]) . "\">\n";
@@ -149,34 +150,34 @@ class YellowComments {
             }
             $output .= "<div class=\"content separate\" id=\"form\"></div>\n";
             if ($this->yellow->page->get("status") != "done" && $this->areOpen) {
-                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
-                $output .= "<form class=\"comments-form comment\" action=\"" . $this->yellow->page->getLocation(true) . "#form\" method=\"post\">\n";
-                if ($this->yellow->system->get("commentsIconGravatar")) {
-                    $output .= "<div class=\"comments-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentsIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
+                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
+                $output .= "<form class=\"comment-form comment\" action=\"" . $this->yellow->page->getLocation(true) . "#form\" method=\"post\">\n";
+                if ($this->yellow->system->get("commentIconGravatar")) {
+                    $output .= "<div class=\"comment-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
                 } else {
-                    $output .= "<div class=\"comments-icon\"><img src=\"" . $this->getUserIcon($this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
+                    $output .= "<div class=\"comment-icon\"><img src=\"" . $this->getUserIcon($this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
                 }
-                $output .= "<div class=\"comments-main\">\n";
-                $output .= "<div class=\"comments-from\"><label for=\"from\">" . $this->yellow->language->getTextHtml("commentsEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . $this->yellow->page->getRequestHtml("from") . "\" /></div>\n";
-                $output .= "<div class=\"comments-name\"><label for=\"name\">" . $this->yellow->language->getTextHtml("commentsName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . $this->yellow->page->getRequestHtml("name") . "\" /></div>\n";
-                $output .= "<div class=\"comments-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentsHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . $this->yellow->page->getRequestHtml("message") . "</textarea></div>\n";
-                $output .= "<div class=\"comments-comment\"><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentsMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $maxSize . "\">" . $this->yellow->page->getRequestHtml("comment") . "</textarea><small class=\"comment-charcount\">0 / " . $maxSize . "</small></div>\n";
+                $output .= "<div class=\"comment-main\">\n";
+                $output .= "<div class=\"comment-from\"><label for=\"from\">" . $this->yellow->language->getTextHtml("commentEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . $this->yellow->page->getRequestHtml("from") . "\" /></div>\n";
+                $output .= "<div class=\"comment-name\"><label for=\"name\">" . $this->yellow->language->getTextHtml("commentName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . $this->yellow->page->getRequestHtml("name") . "\" /></div>\n";
+                $output .= "<div class=\"comment-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . $this->yellow->page->getRequestHtml("message") . "</textarea></div>\n";
+                $output .= "<div class=\"comment-comment\"><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $maxSize . "\">" . $this->yellow->page->getRequestHtml("comment") . "</textarea><small class=\"comment-charcount\">0 / " . $maxSize . "</small></div>\n";
                 $output .= "";
-                $output .= $this->yellow->system->get("commentsConsent") ? "<div class=\"comments-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($this->yellow->page->isRequest("consent") ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentsConsent") . "</label></div>\n" : "";
+                $output .= $this->yellow->system->get("commentConsent") ? "<div class=\"comment-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($this->yellow->page->isRequest("consent") ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentConsent") . "</label></div>\n" : "";
                 $output .= "<div>\n";
                 $output .= "<input type=\"hidden\" name=\"status\" value=\"send\" />\n";
-                $output .= "<input type=\"submit\" value=\"" . $this->yellow->language->getTextHtml("commentsButton") . "\" class=\"btn contact-btn\" />\n";
+                $output .= "<input type=\"submit\" value=\"" . $this->yellow->language->getTextHtml("commentButton") . "\" class=\"btn contact-btn\" />\n";
                 $output .= "</div>\n";
                 $output .= "</div>\n";
                 $output .= "</form>\n";
-                $output .= "<p class=\"comments-info\">";
-                $output .= $this->yellow->language->getText("commentsPrivacy") . " ";
-                $output .= $this->yellow->system->get("commentsIconGravatar") ? $this->yellow->language->getText("commentsGravatar") . " " : "";
-                $output .= $this->yellow->language->getText("commentsMarkdown") . " ";
-                $output .= !$this->yellow->system->get("commentsAutoPublish") ? $this->yellow->language->getText("commentsManual") : "";
+                $output .= "<p class=\"comment-info\">";
+                $output .= $this->yellow->language->getText("commentPrivacy") . " ";
+                $output .= $this->yellow->system->get("commentIconGravatar") ? $this->yellow->language->getText("commentGravatar") . " " : "";
+                $output .= $this->yellow->language->getText("commentMarkdown") . " ";
+                $output .= !$this->yellow->system->get("commentAutoPublish") ? $this->yellow->language->getText("commentManual") : "";
                 $output .= "</p>\n";
             } else {
-                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentsStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
+                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
             }
         }
         return $output;
@@ -187,24 +188,24 @@ class YellowComments {
         $output = null;
         if ($name=="header") {
             $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-            $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}comments.css\" />\n";
-            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comments-textarea.js\"></script>\n";
-            if ($this->yellow->system->get("commentsIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comments-gravatar.js\"></script>\n";
+            $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}comment.css\" />\n";
+            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comment-textarea.js\"></script>\n";
+            if ($this->yellow->system->get("commentIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comment-gravatar.js\"></script>\n";
         }
-        if ($name=="comments") {
-            $output = $this->onParseContentShortcut($page, "comments", "", "block");
+        if ($name=="comment") {
+            $output = $this->onParseContentShortcut($page, "comment", "", "block");
         }
         return $output;
     }
 
     // Return Email
     function getEmail() {
-        return $this->yellow->page->get("moderator") ? $this->yellow->page->get("moderator") : ($this->yellow->system->isExisting("commentsModerator") ? $this->yellow->system->get("commentsModerator") : $this->yellow->system->get("email"));
+        return $this->yellow->page->get("moderator") ? $this->yellow->page->get("moderator") : ($this->yellow->system->isExisting("commentModerator") ? $this->yellow->system->get("commentModerator") : $this->yellow->system->get("email"));
     }
 
     // Return file name from page object
     function getCommentFileName($page) {
-        return dirname($page->fileName) . "/" . $this->yellow->system->get("commentsDirectory") . basename($page->fileName);
+        return dirname($page->fileName) . "/" . $this->yellow->system->get("commentDirectory") . basename($page->fileName);
     }
 
     // Lock comments file
@@ -252,10 +253,10 @@ class YellowComments {
     function saveComments() {
         $status = "send";
         $this->lockComments($this->yellow->page, true);
-        $timeout = time()-$this->yellow->system->get("commentsTimeout")*86400;
-        $content = "---\nTitle: Comments\nParser: comments\n---\n";
-        foreach ($this->comments as $comment) {
-            if ($comment["meta"]["published"] !== "No" || $timeout < strtotime($comment["meta"]["created"]) || $this->yellow->system->get("commentsTimeout") == 0) {
+        $timeout = time()-$this->yellow->system->get("commentTimeout")*86400;
+        $content = "---\nTitle: Comment\nParser: comments\n---\n";
+        foreach ($this->comment as $comment) {
+            if ($comment["meta"]["published"] !== "No" || $timeout < strtotime($comment["meta"]["created"]) || $this->yellow->system->get("commentTimeout") == 0) {
                 $content .= "\n\n---\n";
                 foreach ($comment["meta"] as $key=>$value) {
                     $content .= ucfirst($key). ": " . $value . "\n";
@@ -280,7 +281,7 @@ class YellowComments {
         $comment["meta"]["name"] = filter_var(trim($this->yellow->page->getRequest("name")), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         $comment["meta"]["from"] = filter_var(trim($this->yellow->page->getRequest("from")), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
         $comment["meta"]["created"] = date("Y-m-d H:i");
-        $comment["meta"]["published"] = $this->yellow->system->get("commentsAutoPublish") ? $comment["meta"]["created"] : "No";
+        $comment["meta"]["published"] = $this->yellow->system->get("commentAutoPublish") ? $comment["meta"]["created"] : "No";
         $comment["meta"]["uid"] = md5($this->yellow->toolbox->getServer("REMOTE_ADDR").uniqid());
         $comment["meta"]["aid"] = md5($this->yellow->toolbox->getServer("REMOTE_ADDR").uniqid());
         $comment["text"] = str_replace("\r\n", "\n", trim($this->yellow->page->getRequest("comment")));
@@ -294,8 +295,8 @@ class YellowComments {
         $from = $comment["meta"]["from"];
         $text = $comment["text"];
         $consent = $this->yellow->page->getRequest("consent");
-        $spamFilter = $this->yellow->system->get("commentsSpamFilter");
-        if (is_string_empty($name) || is_string_empty($from) || is_string_empty($text) || (is_string_empty($consent) && $this->yellow->system->get("commentsConsent"))) {
+        $spamFilter = $this->yellow->system->get("commentSpamFilter");
+        if (is_string_empty($name) || is_string_empty($from) || is_string_empty($text) || (is_string_empty($consent) && $this->yellow->system->get("commentConsent"))) {
             return "incomplete";
         } elseif (!is_string_empty($from) && !filter_var($from, FILTER_VALIDATE_EMAIL)) {
             return "invalid";
@@ -303,7 +304,7 @@ class YellowComments {
             return "error";
         } elseif (!is_string_empty($this->yellow->page->getRequest("message"))) {
             return "error"; // honeypot
-        } elseif (strlenu($text) > $this->yellow->system->get("commentsMaxSize")) {
+        } elseif (strlenu($text) > $this->yellow->system->get("commentMaxSize")) {
             return "toolong"; // should be avoided by maxlenght in textarea
         } else {
             return "send";
@@ -325,7 +326,7 @@ class YellowComments {
                     } elseif ($action == "publish") {
                         $comment["meta"]["published"] = date("Y-m-d H:i");
                         $this->saveComments();
-                        if ($this->yellow->system->get("commentsAuthorNotification")) {
+                        if ($this->yellow->system->get("commentAuthorNotification")) {
                             $this->sendNotificationEmail($comment);
                         }
                         break;
@@ -364,7 +365,7 @@ class YellowComments {
         $mailMessage .= "Mail: " . $comment["meta"]["from"] . "\r\n";
         $mailMessage .= "Uid:  " . $comment["meta"]["uid"] . "\r\n";
         $mailMessage .= "-- \r\n";
-        if (!$this->yellow->system->get("commentsAutoPublish")) {
+        if (!$this->yellow->system->get("commentAutoPublish")) {
             $mailMessage.= "Publish: " . $this->yellow->page->getUrl() . "?aid=" . $comment["meta"]["aid"] . "&action=publish\r\n";
         } else {
             $mailMessage.= "Remove: " . $this->yellow->page->getUrl() . "?aid=" . $comment["meta"]["aid"] . "&action=remove\r\n";
@@ -380,7 +381,7 @@ class YellowComments {
 
     // Send notification email
     function sendNotificationEmail($comment) {
-        $mailMessage = $this->yellow->language->getText("commentsPublished")."\r\n\r\n";
+        $mailMessage = $this->yellow->language->getText("commentPublished")."\r\n\r\n";
         $mailMessage .= $this->yellow->page->getUrl() . "#" . $comment["meta"]["uid"] . "\r\n\r\n";
         $mailMessage .= "-- \r\n";
         $mailMessage .= $this->yellow->system->get("sitename") . "\r\n";
@@ -415,9 +416,9 @@ class YellowComments {
     }
 
     function getUserIcon($email) {
-        if ($this->yellow->system->get("commentsIconGravatar")) {
+        if ($this->yellow->system->get("commentIconGravatar")) {
             $base = "//gravatar.com/avatar/";
-            return $base . hash("md5", strtolower(trim($email))) . "?s=" . $this->yellow->system->get("commentsIconSize") . "&d=" . rawurlencode($this->yellow->system->get("commentsIconGravatarDefault"));
+            return $base . hash("md5", strtolower(trim($email))) . "?s=" . $this->yellow->system->get("commentIconSize") . "&d=" . rawurlencode($this->yellow->system->get("commentIconGravatarDefault"));
         } else {
             return "data:image/png;base64," . base64_encode($this->getUserIconPng($email));
         }
@@ -429,7 +430,7 @@ class YellowComments {
         $color_background = 0xFFFFFF;
         $colors = [0xFF0000, 0xCF0000, 0x00FF00, 0x00CF00, 0x0000FF, 0x0000CF, 0xFFCF000, 0xCFFF00, 0x00FFCF, 0x00CFFF, 0xCF00FF, 0xFF00CF];
         $color_foreground = $colors[($hash >> 15) % count($colors)];
-        $multiplicator = ceil($this->yellow->system->get("commentsIconSize")/40);
+        $multiplicator = ceil($this->yellow->system->get("commentIconSize")/40);
         $size = 5*8*$multiplicator;
         $png = "\x89\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52";
         $png .= pack("N", $size) . pack("N", $size);

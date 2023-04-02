@@ -1,4 +1,4 @@
-/* Comments extension, https://github.com/GiovanniSalmeri/yellow-comments */
+/* Comment extension, https://github.com/GiovanniSalmeri/yellow-comment */
 
 .comment {
     clear:both;
@@ -7,11 +7,11 @@
     background-color: #f7f7f7;
     border-radius: 3px;
 }
-.comment-icon, .comments-icon {
+.comment-icon {
     float: left;
     margin-right: 1em;
 }
-.comments-message {
+.comment-message {
     display: none;
 }
 input:focus, textarea:focus {
@@ -23,7 +23,7 @@ input:focus, textarea:focus {
 .comment-name {
     font-weight: bold;
 }
-.comments-info {
+.comment-info {
     font-size: 0.85em;
 }
 form div {
@@ -32,13 +32,13 @@ form div {
 .separate {
     margin-bottom: 2em;
 }
-.comment-main, .comments-main {
+.comment-main {
     display: table-cell;
 }
-.comment-icon, .comments-icon {
+.comment-icon {
     display: table-cell;
 }
-.comments-form .form-control {
+.comment-form .form-control {
     width: 100%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

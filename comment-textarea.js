@@ -1,4 +1,4 @@
-// Comments extension, https://github.com/GiovanniSalmeri/yellow-comments
+// Comment extension, https://github.com/GiovanniSalmeri/yellow-comment
 
 "use strict";
 // https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize
