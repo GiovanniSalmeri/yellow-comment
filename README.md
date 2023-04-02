@@ -18,7 +18,7 @@ To add comments on other pages (that is, non-blog pages) create a `[comments]` s
 
 To put comments on every page of the site, add `<?php echo $this->yellow->page->getExtra("comments") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContent() ?>`.
 
-If you don't want that comments are shown on a page, set `Comments: no` in the [page settings](https://github.com/annaesvensson/yellow-core#settings-page) at the top of a page.
+If you don't want that comments are shown on a page, set `Comments: no` in the [page settings](https://github.com/annaesvensson/yellow-core#settings) at the top of a page.
 
 ## Examples
 
