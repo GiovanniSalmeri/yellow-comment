@@ -192,7 +192,7 @@ class YellowComments {
             if ($this->yellow->system->get("commentsIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comments-gravatar.js\"></script>\n";
         }
         if ($name=="comments") {
-            $output = $this->onParseContentShortcut($page, "comments", "", true);
+            $output = $this->onParseContentShortcut($page, "comments", "", "block");
         }
         return $output;
     }
