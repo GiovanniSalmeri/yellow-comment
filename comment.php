@@ -5,7 +5,7 @@ class YellowComment {
     const VERSION = "0.8.18";
     public $yellow;         //access to API
 
-    var $comments;
+    var $comment;
     var $fileHandle;
     var $areOpen;
 
@@ -254,7 +254,7 @@ class YellowComment {
         $this->lockComments($this->yellow->page, true);
         $timeout = time()-$this->yellow->system->get("commentTimeout")*86400;
         $content = "---\nTitle: Comment\nParser: comments\n---\n";
-        foreach ($this->comment as $comment) {
+        foreach ($this->comments as $comment) {
             if ($comment["meta"]["published"] !== "No" || $timeout < strtotime($comment["meta"]["created"]) || $this->yellow->system->get("commentTimeout") == 0) {
                 $content .= "\n\n---\n";
                 foreach ($comment["meta"] as $key=>$value) {
