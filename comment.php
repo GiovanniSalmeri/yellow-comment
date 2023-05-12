@@ -2,7 +2,7 @@
 // Comment extension, https://github.com/GiovanniSalmeri/yellow-comment
 
 class YellowComment {
-    const VERSION = "0.8.18";
+    const VERSION = "0.8.19";
     public $yellow;         //access to API
 
     var $comment;
@@ -369,13 +369,16 @@ class YellowComment {
         } else {
             $mailMessage.= "Remove: " . $this->yellow->page->getUrl() . "?aid=" . $comment["meta"]["aid"] . "&action=remove\r\n";
         }
-        $mailSubject = mb_encode_mimeheader("[".$this->yellow->system->get("sitename")."] " . $this->yellow->page->get("title"));
-        $mailHeaders = "From: " . mb_encode_mimeheader($comment["meta"]["name"]) . " <" . $comment["meta"]["from"] . ">\r\n";
-        $mailHeaders .= "X-Contact-Url: " . mb_encode_mimeheader($this->yellow->page->getUrl()) . "\r\n";
-        $mailHeaders .= "X-Remote-Addr: " . mb_encode_mimeheader($this->yellow->toolbox->getServer("REMOTE_ADDR")) . "\r\n";
-        $mailHeaders .= "Mime-Version: 1.0\r\n";
-        $mailHeaders .= "Content-Type: text/plain; charset=utf-8\r\n";
-        return mail($this->getEmail(), $mailSubject, $mailMessage, $mailHeaders) ? "done" : "error";
+        $mailHeaders = array(
+            "To" => $this->getEmail(),
+            "From" => $this->yellow->system->get("sitename")." <".$this->yellow->system->get("email").">",
+            "Reply-To" => $comment["meta"]["name"]." <".$comment["meta"]["from"].">",
+            "Subject" => "[".$this->yellow->system->get("sitename")."] ".$this->yellow->page->get("title"),
+            "Date" => date(DATE_RFC2822),
+            "Mime-Version" => "1.0",
+            "Content-Type" => "text/plain; charset=utf-8",
+            "X-Request-Url" => $this->yellow->page->getUrl());
+        return $this->yellow->toolbox->mail("comment", $mailHeaders, $mailMessage) ? "done" : "error";
     }
 
     // Send notification email
@@ -384,11 +387,14 @@ class YellowComment {
         $mailMessage .= $this->yellow->page->getUrl() . "#" . $comment["meta"]["uid"] . "\r\n\r\n";
         $mailMessage .= "-- \r\n";
         $mailMessage .= $this->yellow->system->get("sitename") . "\r\n";
-        $mailSubject = mb_encode_mimeheader("[".$this->yellow->system->get("sitename")."] " . $this->yellow->page->get("title"));
-        $mailHeaders = "From: " . mb_encode_mimeheader($this->yellow->system->get("sitename")) . "<" . $this->yellow->system->get("email") . ">\r\n";
-        $mailHeaders .= "Mime-Version: 1.0\r\n";
-        $mailHeaders .= "Content-Type: text/plain; charset=utf-8\r\n";
-        return mail($comment["meta"]["from"], $mailSubject, $mailMessage, $mailHeaders) ? "done" : "error";
+        $mailHeaders = array(
+            "To" => $comment["meta"]["name"]." <".$comment["meta"]["from"].">",
+            "From" => $this->yellow->system->get("sitename")." <".$this->yellow->system->get("email").">",
+            "Subject" => "[".$this->yellow->system->get("sitename")."] ".$this->yellow->page->get("title"),
+            "Date" => date(DATE_RFC2822),
+            "Mime-Version" => "1.0",
+            "Content-Type" => "text/plain; charset=utf-8");
+        return $this->yellow->toolbox->mail("comment", $mailHeaders, $mailMessage) ? "done" : "error";
     }
 
     // Return number of visible comments
