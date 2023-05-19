@@ -312,7 +312,7 @@ class YellowComment {
 
     // Process user input
     function processSend() {
-        if ($this->yellow->isCommandLine()) $this->yellow->page->error(500, "Static website not supported!");
+        if ($this->yellow->lookup->isCommandLine()) $this->yellow->page->error(500, "Static website not supported!");
         $aid = $this->yellow->page->getRequest("aid");
         $action = $this->yellow->page->getRequest("action");
         if ($aid) {
