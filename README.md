@@ -10,11 +10,11 @@ Simple commenting system.
 
 ## How to show comments
 
-The extension adds automatically a comment section on blog pages.
+The extension adds a comment section on blog pages.
 
-To add comments on other pages (that is, non-blog pages) create a `[comment]` shortcut at the end of each page in which you want a comments section. In this case the following optional argument is available:
+To add comments on other pages create a `[comment]` shortcut. The following optional argument is available:
 
-`opening` = number of days from publication after which comments are closed; this argument, if present, overrides the `CommentOpening` setting (in other words: this value is used and `CommentOpening` is ignored). See below for details and for the meaning of the special values `0` and `-1`.
+`opening` = number of days from publication after which comments are closed, or `0` (never closed), or `-1` (always closed).
 
 To put comments on every page of the site, add `<?php echo $this->yellow->page->getExtra("comment") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContent() ?>`.
 
