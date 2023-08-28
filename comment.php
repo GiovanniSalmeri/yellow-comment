@@ -253,7 +253,7 @@ class YellowComment {
         $status = "send";
         $this->lockComments($this->yellow->page, true);
         $timeout = time()-$this->yellow->system->get("commentTimeout")*86400;
-        $content = "---\nTitle: Comment\nParser: comments\n---\n";
+        $content = "---\nTitle: Comment\nStatus: unlisted\n---\n";
         foreach ($this->comments as $comment) {
             if ($comment["meta"]["published"] !== "No" || $timeout < strtotime($comment["meta"]["created"]) || $this->yellow->system->get("commentTimeout") == 0) {
                 $content .= "\n\n---\n";
