@@ -5,7 +5,7 @@ class YellowComment {
     const VERSION = "0.8.19";
     public $yellow;         //access to API
 
-    var $comment;
+    var $comments;
     var $fileHandle;
     var $areOpen;
 
