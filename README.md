@@ -16,7 +16,7 @@ To add comments on other pages create a `[comment]` shortcut. The following opti
 
 `opening` = number of days from publication after which comments are closed, or `0` (never closed), or `-1` (always closed).
 
-To put comments on every page of the site, add `<?php echo $this->yellow->page->getExtra("comment") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContent() ?>`.
+To put comments on every page of the site, add `<?php echo $this->yellow->page->getExtraHtml("comment") ?>` in  `system/layouts/default.html`, after the line `<?php echo $this->yellow->page->getContentHtml() ?>`.
 
 If you don't want comments to be shown on a page, set `Comment: exclude` in the [page settings](https://github.com/annaesvensson/yellow-core#settings-page) at the top of a page.
 
@@ -49,8 +49,8 @@ Layout file with comments:
     <div class="content">
     <div class="main" role="main">
     <h1><?php echo $this->yellow->page->getHtml("titleContent") ?></h1>
-    <?php echo $this->yellow->page->getContent() ?>
-    <?php echo $this->yellow->page->getExtra("comment") ?>
+    <?php echo $this->yellow->page->getContentHtml() ?>
+    <?php echo $this->yellow->page->getExtraHtml("comment") ?>
     </div>
     </div>
     <?php $this->yellow->layout("footer") ?>
