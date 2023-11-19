@@ -136,7 +136,7 @@ class YellowComment {
                     $output .= "<div class=\"comment-icon\"><img src=\"" . $this->getUserIcon($comment["meta"]["from"]) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
                     $output .= "<div class=\"comment-main\">\n";
                     $output .= "<div class=\"comment-name\">" . htmlspecialchars($comment["meta"]["name"]) . "</div>\n";
-                    $output .= "<div class=\"comment-date\">" . $this->yellow->language->normaliseDate($comment["meta"]["created"]) . "</div>\n";
+                    $output .= "<div class=\"comment-date\">".$this->yellow->language->getDateFormatted(strtotime($comment["meta"]["created"]), $this->yellow->language->getText("coreDateFormatLong")) . "</div>\n";
                     $output .= "<div class=\"comment-content\">" . $this->toHtml($comment["text"]) . "</div>\n";
                     $output .= "</div>\n";
                     $output .= "</div>\n";
