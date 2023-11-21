@@ -93,7 +93,6 @@ class YellowComment {
             "CommentPrivacy: Il tuo indirizzo di posta elettronica non sarà né pubblicato né ceduto a terzi.",
             "CommentGravatar: Usa il servizio <a href=\"https://it.gravatar.com\">Gravatar</a> se vuoi che sia mostrata una foto accanto al tuo nome.",
             "CommentMarkdown: Nel testo puoi usare il <code>*corsivo*</code>, il <code>**neretto**</code>, i  <code>[collegamenti](http://example.org)</code>.",
-            "i collegamenti <code>&lt;http://example.org&gt;</code> e altri elementi.",
             "CommentManual: I commenti sono moderati e pubblicati manualmente appena possibile.",
             "CommentPublished: Il tuo commento è stato pubblicato. Grazie per il contributo!",
             "CommentHoneypot: Lascia questo campo vuoto:",
