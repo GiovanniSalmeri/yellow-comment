@@ -23,6 +23,7 @@ class YellowComment {
         $this->yellow->system->setDefault("commentIconSize", "80");
         $this->yellow->system->setDefault("commentIconGravatar", "0");
         $this->yellow->system->setDefault("commentIconGravatarDefault", "mp");
+        $this->yellow->system->setDefault("commentReverseOrder", "0");
         $this->yellow->system->setDefault("commentConsent", "0");
         $this->yellow->language->setDefaults([
             "Language: en",
@@ -126,10 +127,12 @@ class YellowComment {
             $this->unlockComments();
             $iconSize = $this->yellow->system->get("commentIconSize");
             $maxSize = $this->yellow->system->get("commentMaxSize");
+            $reverseOrder = $this->yellow->system->get("commentReverseOrder");
 
-            $output = "<div class=\"comment\" id=\"comment\">\n";
+            if ($reverseOrder) $output .= $this->buildForm();
+            $output .= "<div class=\"comment\" id=\"comment\">\n";
             $output .= "<h2><span>" . $this->yellow->language->getText("commentCommentList") . " " . $this->getCommentCount() . "</span></h2>\n";
-            foreach ($this->comments as $comment) {
+            foreach ($reverseOrder ? array_reverse($this->comments) : $this->comments as $comment) {
                 if ($comment["meta"]["published"] !== "No") {
                     $output .= "<div class=\"comment\" id=\"" . htmlspecialchars($comment["meta"]["uid"]) . "\">\n";
                     $output .= "<div class=\"comment-icon\"><img src=\"" . $this->getUserIcon($comment["meta"]["from"]) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
@@ -142,41 +145,7 @@ class YellowComment {
                 }
             }
             $output .= "</div>\n";
-            if ($this->yellow->toolbox->getCookie("status")=="done") {
-                setcookie("status", "", 1);
-                $this->yellow->page->set("status", "done");
-            }
-            $output .= "<div class=\"content separate\" id=\"form\"></div>\n";
-            if ($this->yellow->page->get("status") != "done" && $this->areOpen) {
-                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
-                $output .= "<form class=\"comment-form comment\" action=\"" . $this->yellow->page->getLocation(true) . "#form\" method=\"post\">\n";
-                if ($this->yellow->system->get("commentIconGravatar")) {
-                    $output .= "<div class=\"comment-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
-                } else {
-                    $output .= "<div class=\"comment-icon\"><img src=\"" . $this->getUserIcon($this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
-                }
-                $output .= "<div class=\"comment-main\">\n";
-                $output .= "<div class=\"comment-from\"><label for=\"from\">" . $this->yellow->language->getTextHtml("commentEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . $this->yellow->page->getRequestHtml("from") . "\" /></div>\n";
-                $output .= "<div class=\"comment-name\"><label for=\"name\">" . $this->yellow->language->getTextHtml("commentName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . $this->yellow->page->getRequestHtml("name") . "\" /></div>\n";
-                $output .= "<div class=\"comment-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . $this->yellow->page->getRequestHtml("message") . "</textarea></div>\n";
-                $output .= "<div class=\"comment-comment\"><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $maxSize . "\">" . $this->yellow->page->getRequestHtml("comment") . "</textarea><small class=\"comment-charcount\">0 / " . $maxSize . "</small></div>\n";
-                $output .= "";
-                $output .= $this->yellow->system->get("commentConsent") ? "<div class=\"comment-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($this->yellow->page->isRequest("consent") ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentConsent") . "</label></div>\n" : "";
-                $output .= "<div>\n";
-                $output .= "<input type=\"hidden\" name=\"status\" value=\"send\" />\n";
-                $output .= "<input type=\"submit\" value=\"" . $this->yellow->language->getTextHtml("commentButton") . "\" class=\"btn contact-btn\" />\n";
-                $output .= "</div>\n";
-                $output .= "</div>\n";
-                $output .= "</form>\n";
-                $output .= "<p class=\"comment-info\">";
-                $output .= $this->yellow->language->getText("commentPrivacy") . " ";
-                $output .= $this->yellow->system->get("commentIconGravatar") ? $this->yellow->language->getText("commentGravatar") . " " : "";
-                $output .= $this->yellow->language->getText("commentMarkdown") . " ";
-                $output .= !$this->yellow->system->get("commentAutoPublish") ? $this->yellow->language->getText("commentManual") : "";
-                $output .= "</p>\n";
-            } else {
-                $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
-            }
+            if (!$reverseOrder) $output .= $this->buildForm();
         }
         return $output;
     }
@@ -271,6 +240,50 @@ class YellowComment {
             $status = "error";
         }
         return $status;
+    }
+
+    // Build comment form
+    private function buildForm() {
+        $iconSize = $this->yellow->system->get("commentIconSize");
+        $maxSize = $this->yellow->system->get("commentMaxSize");
+
+        $output = null;
+        if ($this->yellow->toolbox->getCookie("status")=="done") {
+            setcookie("status", "", 1);
+            $this->yellow->page->set("status", "done");
+        }
+        $output .= "<div class=\"content separate\" id=\"form\"></div>\n";
+        if ($this->yellow->page->get("status") != "done" && $this->areOpen) {
+            $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
+            $output .= "<form class=\"comment-form comment\" action=\"" . $this->yellow->page->getLocation(true) . "#form\" method=\"post\">\n";
+            if ($this->yellow->system->get("commentIconGravatar")) {
+                $output .= "<div class=\"comment-icon\"><img id=\"gravatar\" src=\"" . $this->getUserIcon($this->yellow->page->get("status") == "invalid" ? "" : $this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" data-default=\"" . rawurlencode($this->yellow->system->get("commentIconGravatarDefault")) . "\" alt=\"Image\" /></div>\n";
+            } else {
+                $output .= "<div class=\"comment-icon\"><img src=\"" . $this->getUserIcon($this->yellow->page->getRequest("from")) . "\" width=\"" . $iconSize . "\" height=\"" . $iconSize . "\" alt=\"Image\" /></div>\n";
+            }
+            $output .= "<div class=\"comment-main\">\n";
+            $output .= "<div><label for=\"from\">" . $this->yellow->language->getTextHtml("commentEmail") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"from\" id=\"from\" value=\"" . $this->yellow->page->getRequestHtml("from") . "\" /></div>\n";
+            $output .= "<div><label for=\"name\">" . $this->yellow->language->getTextHtml("commentName") . "</label><br /><input type=\"text\" size=\"40\" class=\"form-control\" name=\"name\" id=\"name\" value=\"" . $this->yellow->page->getRequestHtml("name") . "\" /></div>\n";
+            $output .= "<div class=\"comment-message\"><label for=\"message\">" . $this->yellow->language->getTextHtml("commentHoneypot") . "</label><br /><textarea class=\"form-control\" name=\"message\" id=\"message\" rows=\"2\" cols=\"70\">" . $this->yellow->page->getRequestHtml("message") . "</textarea></div>\n";
+            $output .= "<div><label for=\"comment\">" . $this->yellow->language->getTextHtml("commentMessage") . "</label><br /><textarea class=\"form-control\" name=\"comment\" id=\"comment\" rows=\"7\" cols=\"70\" maxlength=\"" . $maxSize . "\">" . $this->yellow->page->getRequestHtml("comment") . "</textarea><small class=\"comment-charcount\">0 / " . $maxSize . "</small></div>\n";
+            $output .= "";
+            $output .= $this->yellow->system->get("commentConsent") ? "<div class=\"comment-consent\"><input type=\"checkbox\" name=\"consent\" value=\"consent\" id=\"consent\"" . ($this->yellow->page->isRequest("consent") ? " checked=\"checked\"" : "") . "> <label for=\"consent\">" . $this->yellow->language->getTextHtml("commentConsent") . "</label></div>\n" : "";
+            $output .= "<div>\n";
+            $output .= "<input type=\"hidden\" name=\"status\" value=\"send\" />\n";
+            $output .= "<input type=\"submit\" value=\"" . $this->yellow->language->getTextHtml("commentButton") . "\" class=\"btn contact-btn\" />\n";
+            $output .= "</div>\n";
+            $output .= "</div>\n";
+            $output .= "</form>\n";
+            $output .= "<p class=\"comment-info\">";
+            $output .= $this->yellow->language->getText("commentPrivacy") . " ";
+            $output .= $this->yellow->system->get("commentIconGravatar") ? $this->yellow->language->getText("commentGravatar") . " " : "";
+            $output .= $this->yellow->language->getText("commentMarkdown") . " ";
+            $output .= !$this->yellow->system->get("commentAutoPublish") ? $this->yellow->language->getText("commentManual") : "";
+            $output .= "</p>\n";
+        } else {
+            $output .= "<p class=\"" . $this->yellow->page->getHtml("status") . "\">" . $this->yellow->language->getTextHtml("commentStatus".ucfirst($this->yellow->page->get("status"))) . "</p>\n";
+        }
+        return $output;
     }
 
     // Build comment from input

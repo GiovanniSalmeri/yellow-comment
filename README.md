@@ -70,7 +70,8 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `CommentIconSize` = size in pixel of the icon  
 `CommentIconGravatar` = use [Gravatar](https://en.gravatar.com/) images instead of the internal image creator and fill in the name field, if available in the Gravatar profile  
 `CommentIconGravatarDefault` = default image for Gravatar (see the [documentation](https://en.gravatar.com/site/implement/images/) for possible values)  
-`CommentConsent` = shows a consent checkbox (not required by European GDPR)   
+`CommentReverseOrder` = show comments in reverse order (newest to oldest)  
+`CommentConsent` = show a consent checkbox (not required by European GDPR)   
 
 ## Acknowledgements
 
