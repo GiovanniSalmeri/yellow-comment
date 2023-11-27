@@ -2,11 +2,11 @@
 
 Simple commenting system.
 
-<p align="center"><img src="comment-screenshot.png?raw=true" alt="Screenshot"></p>
+<p align="SCREENSHOT.png?raw=true" alt="Screenshot"></p>
 
 ## How to install an extension
 
-[Download ZIP file](https://github.com/GiovanniSalmeri/yellow-comment/archive/main.zip) and copy it into your `system/extensions` folder. [Learn more about extensions](https://github.com/annaesvensson/yellow-update).
+[Download ZIP file](https://github.com/GiovanniSalmeri/yellow-comment/archive/refs/heads/main.zip) and copy it into your `system/extensions` folder. [Learn more about extensions](https://github.com/annaesvensson/yellow-update).
 
 ## How to show comments
 
