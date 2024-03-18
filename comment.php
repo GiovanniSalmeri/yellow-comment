@@ -25,7 +25,7 @@ class YellowComment {
         $this->yellow->system->setDefault("commentIconGravatarDefault", "mp");
         $this->yellow->system->setDefault("commentReverseOrder", "0");
         $this->yellow->system->setDefault("commentConsent", "0");
-        $this->yellow->language->setDefaults([
+        $this->yellow->language->setDefaults(array(
             "Language: en",
             "CommentCommentList: Comments:",
             "CommentStatusNone: Interested to discuss? Leave a comment.",
@@ -106,7 +106,7 @@ class YellowComment {
             "CommentStatusInvalid: Inserisci per favore un indirizzo email valido.",
             "CommentStatusError: C'è stato un problema nell'invio del messaggio. Riprova per favore più tardi.",
             "CommentStatusToolong: Il commento è troppo lungo, prova ad essere più conciso...",
-        ]);
+        ));
     }
 
     // Handle page content parsing of custom block
