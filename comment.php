@@ -2,7 +2,7 @@
 // Comment extension, https://github.com/GiovanniSalmeri/yellow-comment
 
 class YellowComment {
-    const VERSION = "0.8.19";
+    const VERSION = "0.9.1";
     public $yellow;         //access to API
 
     var $comments;
@@ -110,7 +110,7 @@ class YellowComment {
     }
 
     // Handle page content parsing of custom block
-    public function onParseContentShortcut($page, $name, $text, $type) {
+    public function onParseContentElement($page, $name, $text, $attributes, $type) {
         $output = null;
         if ($name=="comment" && ($type=="block" || $type=="inline") && !preg_match("/exclude/i", $page->get("comment"))) {
             list($opening) = $this->yellow->toolbox->getTextArguments($text);
@@ -154,20 +154,20 @@ class YellowComment {
     public function onParsePageExtra($page, $name) {
         $output = null;
         if ($name=="header") {
-            $extensionLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreExtensionLocation");
-            $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$extensionLocation}comment.css\" />\n";
-            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comment-textarea.js\"></script>\n";
-            if ($this->yellow->system->get("commentIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$extensionLocation}comment-gravatar.js\"></script>\n";
+            $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
+            $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$assetLocation}comment.css\" />\n";
+            $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$assetLocation}comment-textarea.js\"></script>\n";
+            if ($this->yellow->system->get("commentIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$assetLocation}comment-gravatar.js\"></script>\n";
         }
         if ($name=="comment") {
-            $output = $this->onParseContentShortcut($page, "comment", "", "block");
+            $output = $this->onParseContentElement($page, "comment", "", "", "block");
         }
         return $output;
     }
 
     // Return Email
     function getEmail() {
-        return $this->yellow->page->get("moderator") ? $this->yellow->page->get("moderator") : ($this->yellow->system->isExisting("commentModerator") ? $this->yellow->system->get("commentModerator") : $this->yellow->system->get("email"));
+        return $this->yellow->system->isExisting("commentModerator") ? $this->yellow->system->get("commentModerator") : $this->yellow->system->get("email");
     }
 
     // Return file name from page object
@@ -377,9 +377,9 @@ class YellowComment {
         $mailMessage .= "Uid:  " . $comment["meta"]["uid"] . "\r\n";
         $mailMessage .= "-- \r\n";
         if (!$this->yellow->system->get("commentAutoPublish")) {
-            $mailMessage.= "Publish: " . $this->yellow->page->getUrl() . "?aid=" . $comment["meta"]["aid"] . "&action=publish\r\n";
+            $mailMessage.= "Publish: " . $this->yellow->page->getUrl(true) . "?aid=" . $comment["meta"]["aid"] . "&action=publish\r\n";
         } else {
-            $mailMessage.= "Remove: " . $this->yellow->page->getUrl() . "?aid=" . $comment["meta"]["aid"] . "&action=remove\r\n";
+            $mailMessage.= "Remove: " . $this->yellow->page->getUrl(true) . "?aid=" . $comment["meta"]["aid"] . "&action=remove\r\n";
         }
         $mailHeaders = array(
             "To" => $this->getEmail(),
@@ -389,14 +389,17 @@ class YellowComment {
             "Date" => date(DATE_RFC2822),
             "Mime-Version" => "1.0",
             "Content-Type" => "text/plain; charset=utf-8",
-            "X-Request-Url" => $this->yellow->page->getUrl());
+            "X-Request-Url" => $this->yellow->page->getUrl(true));
+        foreach([ "To", "From", "Reply-To" ] as $headerName) {
+            $mailHeaders[$headerName] = $this->yellow->lookup->normaliseAddress($mailHeaders[$headerName]);
+        }
         return $this->yellow->toolbox->mail("comment", $mailHeaders, $mailMessage) ? "done" : "error";
     }
 
     // Send notification email
     function sendNotificationEmail($comment) {
         $mailMessage = $this->yellow->language->getText("commentPublished")."\r\n\r\n";
-        $mailMessage .= $this->yellow->page->getUrl() . "#" . $comment["meta"]["uid"] . "\r\n\r\n";
+        $mailMessage .= $this->yellow->page->getUrl(true) . "#" . $comment["meta"]["uid"] . "\r\n\r\n";
         $mailMessage .= "-- \r\n";
         $mailMessage .= $this->yellow->system->get("sitename") . "\r\n";
         $mailHeaders = array(
@@ -406,6 +409,9 @@ class YellowComment {
             "Date" => date(DATE_RFC2822),
             "Mime-Version" => "1.0",
             "Content-Type" => "text/plain; charset=utf-8");
+        foreach([ "To", "From" ] as $headerName) {
+            $mailHeaders[$headerName] = $this->yellow->lookup->normaliseAddress($mailHeaders[$headerName]);
+        }
         return $this->yellow->toolbox->mail("comment", $mailHeaders, $mailMessage) ? "done" : "error";
     }
 

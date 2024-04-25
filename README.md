@@ -1,4 +1,4 @@
-# Comment 0.8.19
+# Comment 0.9.1
 
 Simple commenting system.
 
@@ -59,7 +59,7 @@ Layout file with comments:
 
 The following settings can be configured in file `system/extensions/yellow-system.ini`:
 
-`CommentModerator`) = email address of moderator. If not present, main `email` address of site is used; this value can be overridden with a setting `Moderator` in the page.  
+`CommentModerator` = email address of moderator. If not present, main `email` address of site is used  
 `CommentDirectory` = directory for comments  
 `CommentAutoPublish` = if set to `1` any comment is published immediately and the moderator can later remove it; if set to `0` no comment is published unless the moderator approves it (except particular cases, this latter behaviour is much more desirable)  
 `CommentMaxSize` = maximum size of a comment  
@@ -72,6 +72,8 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `CommentIconGravatarDefault` = default image for Gravatar (see the [documentation](https://en.gravatar.com/site/implement/images/) for possible values)  
 `CommentReverseOrder` = show comments in reverse order (newest to oldest)  
 `CommentConsent` = show a consent checkbox (not required by European GDPR)   
+
+Use [Perpage](https://github.com/GiovanniSalmeri/yellow-perpage) if you want to ovverride these settings for a single page.
 
 ## Acknowledgements
 
