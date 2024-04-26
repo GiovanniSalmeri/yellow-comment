@@ -73,8 +73,6 @@ The following settings can be configured in file `system/extensions/yellow-syste
 `CommentReverseOrder` = show comments in reverse order (newest to oldest)  
 `CommentConsent` = show a consent checkbox (not required by European GDPR)   
 
-Use [Perpage](https://github.com/GiovanniSalmeri/yellow-perpage) if you want to ovverride these settings for a single page.
-
 ## Acknowledgements
 
 This extension was previously maintained by Christoph Schröder and David Fehrmann. Thank you for the good work.
