@@ -109,7 +109,7 @@ class YellowComment {
         ));
     }
 
-    // Handle page content parsing of custom block
+    // Handle page content element
     public function onParseContentElement($page, $name, $text, $attributes, $type) {
         $output = null;
         if ($name=="comment" && ($type=="block" || $type=="inline") && !preg_match("/exclude/i", $page->get("comment"))) {
