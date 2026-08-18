@@ -441,7 +441,7 @@ class YellowComment {
     function getUserIcon($email) {
         if ($this->yellow->system->get("commentIconGravatar")) {
             $base = "//gravatar.com/avatar/";
-            return $base . hash("md5", strtolower(trim($email))) . "?s=" . $this->yellow->system->get("commentIconSize") . "&d=" . rawurlencode($this->yellow->system->get("commentIconGravatarDefault"));
+            return $base . hash("sha256", strtolower(trim($email))) . "?s=" . $this->yellow->system->get("commentIconSize") . "&d=" . rawurlencode($this->yellow->system->get("commentIconGravatarDefault"));
         } else {
             return "data:image/png;base64," . base64_encode($this->getUserIconPng($email));
         }
