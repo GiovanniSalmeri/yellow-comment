@@ -1,8 +1,8 @@
-# Comment 0.9.1
+# Comment 1.0.0
 
-Simple commenting system.
+Simple commenting system. Developed by Giovanni Salmeri.
 
-<p align="center"><img src="SCREENSHOT.png" alt="Screenshot"></p>
+<p align="center"><img src="screenshot.png" alt="Screenshot"></p>
 
 ## How to install an extension
 
@@ -77,6 +77,4 @@ The following settings can be configured in file `system/extensions/yellow-syste
 
 This extension was previously maintained by Christoph Schröder and David Fehrmann. Thank you for the good work.
 
-## Developer
-
-Giovanni Salmeri. [Get help](https://datenstrom.se/yellow/help/).
+Do you have questions? [Get help](https://datenstrom.se/yellow/help/).

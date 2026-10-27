@@ -2,7 +2,7 @@
 // Comment extension, https://github.com/GiovanniSalmeri/yellow-comment
 
 class YellowComment {
-    const VERSION = "0.9.1";
+    const VERSION = "1.0.0";
     public $yellow;         //access to API
 
     var $comments;
@@ -157,7 +157,7 @@ class YellowComment {
             $assetLocation = $this->yellow->system->get("coreServerBase").$this->yellow->system->get("coreAssetLocation");
             $output .= "<link rel=\"stylesheet\" type=\"text/css\" media=\"all\" href=\"{$assetLocation}comment.css\" />\n";
             $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$assetLocation}comment-textarea.js\"></script>\n";
-            if ($this->yellow->system->get("commentIconGravatar")) $output .= "<script type=\"text/javascript\" defer=\"defer\" src=\"{$assetLocation}comment-gravatar.js\"></script>\n";
+            if ($this->yellow->system->get("commentIconGravatar")) $output .= "<script defer=\"defer\" src=\"{$assetLocation}comment-gravatar.js\"></script>\n";
         }
         if ($name=="comment") {
             $output = $this->onParseContentElement($page, "comment", "", "", "block");

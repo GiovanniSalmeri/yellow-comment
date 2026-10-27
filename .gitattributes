@@ -1,4 +1,4 @@
 .gitattributes export-ignore
-LICENSE.md export-ignore
-README*.md export-ignore
-SCREENSHOT*.png export-ignore
+license.md export-ignore
+readme*.md export-ignore
+screenshot*.png export-ignore
